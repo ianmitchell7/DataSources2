@@ -1,0 +1,27 @@
+<form class="form-horizontal container-fluid portalsForm">
+    <div class="form-group row">
+        <input type="hidden" class="col-md-4 hidden" placeholder="portal id" name="portalId" id="inputPortalId" value="">
+    </div>
+    <div class="form-group row">
+        <label for="inputPortalName" class="col-md-3" data-minlength="5" >Portal Name</label>
+        <input type="text" class="col-sm-6 inputPortal form-control" placeholder="portal name" name="portalName" id="inputPortalName" value="">
+    </div>
+    <div class="form-group row">
+        <label for="inputPortalUrl" class="col-md-3">URL</label>
+        <input type="text" class="col-sm-8 inputPortal form-control" placeholder="URL address" name="url" id="inputPortalUrl" value="">
+    </div>
+    <div ID="ewControllerDropDownList">
+        <!--  HTML code here, for "Early Warning Controller" input field (drop-down list)  -->
+        <!-- javascript to insert HTML code here         -->
+    </div>
+    <div class="form-group">
+        <input type="button" id="btnPortalSave" class="btn btn-primary" class="col-sm-1" value="SAVE">
+        <input type="button" id="btnPortalClose" class="btn btn-primary" class="col-sm-1" value="Close">
+       <!---- <input type="button" id="btnPortalDelete" class="btn btn-primary"  class="col-sm-1" value="DELETE"> -->
+        <input type="button" id="btnPortalAdd" class="btn btn-primary" class="col-sm-1" value="New Portal">
+        <input type="button" id="btnPortalsLinkToDataSources" class="btn btn-primary" class="col-sm-1" value="Link to Data Sources">
+    </div>
+    <div id="dataSourceTable">
+        <!-- Data Source table filled here by javascript -->
+    </div>
+</form>

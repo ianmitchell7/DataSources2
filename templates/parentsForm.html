@@ -1,0 +1,23 @@
+<form class="form-horizontal container-fluid parentsForm">
+    <div class="form-group row">
+        <input type="hidden" class="col-sm-4 hidden" placeholder="parent id" name="parentSourceId" id="inputParentSourceId" value="">
+    </div>
+    <div class="form-group row">
+        <label for="inputParentSourceName" class="col-md-3" data-minlength="5" >Parent Name</label>
+        <input type="text" class="col-md-6 inputParent form-control" placeholder="parent name" name="parentSourceName" id="inputParentSourceName" value="">
+    </div>
+    <div class="form-group row">
+        <label for="inputParentSourceUrl" class="col-md-3">URL</label>
+        <input type="text" class="col-md-8 inputParent form-control" placeholder="URL address" name="url" id="inputParentSourceUrl" value="">
+    </div>
+    <div class="form-group">
+        <input type="button" id="btnParentSave"          class="btn btn-primary" class="col-sm-1" value="SAVE">
+        <input type="button" id="btnParentClose"         class="btn btn-primary" class="col-sm-1" value="Close">
+       <!--  <input type="button" id="btnParentDelete"        class="btn btn-primary" class="col-sm-1" value="DELETE"> -->
+        <input type="button" id="btnParentAdd"           class="btn btn-primary" class="col-sm-1" value="New Parent">
+        <input type="button" id="btnParentAddDataSource" class="btn btn-primary" class="col-sm-1" value="Add new Data Source">
+    </div>
+    <div id="dataSourceTable">
+        <!-- Data Source table filled here by javascript -->
+    </div>
+</form>

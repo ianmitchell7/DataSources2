@@ -1,0 +1,30 @@
+    <div class="dataSourcesTableFilter d-none" id="filterArea">
+        <div class="searchTextFilter">
+            <label id="dsTableFilterSearchLabel" for="dsTableFilterSearchText" class="dsTableFilterSearchLabel col-sm-2">Search : </label>
+            <input id="dsTableFilterSearchText" class="dsTableFilterSearchText col-sm-4" type="text" placeholder="data source name - search text" value="">
+        </div>
+        <div class="row">
+            <div class="ewControllerCheckBoxControl">
+                <!----- JAVASCRIPT to fill here ------>
+            </div>
+            <div class="updateIntervalCheckBoxControl">
+                <!----- JAVASCRIPT to fill here ------>
+            </div>
+            <div class="receivedButNotCompleted" row>
+                <label for="receivedButNotCompletedCheckbox">Received but not completed</label>
+                <input id="receivedButNotCompletedCheckbox" class="receivedButNotCompletedCheckbox col-sm-3" type="checkbox" value="">
+            </div>
+
+        </div>
+    </div>
+    <table class="table table-sm" id="datatable">
+        <tr id="dataSourceTableHeadings" style="overflow-wrap: break-word; line-height: 10px;">
+            <th>Data Source</th>
+            <th>URL</th>
+            <th>Wachete</th>
+            <th style="word-wrap:break-word">Next update</th>
+        </tr>
+        <tbody id="datatablebody">
+        <!-- Data Source table filled here by javascript -->
+        </tbody>
+    </table>

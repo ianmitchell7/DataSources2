@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--<link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-grid.min.css">
+    <link rel="stylesheet" href="css/bootstrap-grid.css">-->
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/bootstrap-Test.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+</head>
+
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#"><!--<img class="ew-image-navbar" src="img/loginlogo.png">-->
+                earlyWarning</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#"></a></li>
+            <li><a href="#"></a></li>
+            <li><a href="#"></a></li>
+        </ul>
+    </div>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar leftDsNav">
+            <div class="accordion" id="accordionDs">
+                <!-- PARENT DATA SOURCES accordion -->
+                <div class="card">
+                    <div class="card-header" id="headingDataSourceParent">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                    data-target="#collapseDataSourceParent" aria-expanded="false"
+                                    aria-controls="collapsePDataSourceParent">
+                                Parents
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapseDataSourceParent" class="collapse" aria-labelledby="headingDataSourceParent"
+                         data-parent="#accordionDs">
+                        <div class="card-body">
+                            <!-- list filled here by javascript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DATA SOURCES accordion -->
+                <div class="card">
+                    <div class="card-header" id="headingDataSource">
+                        <h5 class="mb-0">
+                            <button id="dataSourceAccHeading" class="btn btn-link collapsed" value="" type="button"
+                                    data-toggle="collapse"
+                                    data-target="#collapseDataSource" aria-expanded="false"
+                                    aria-controls="collapsePDataSource">
+                                Sources
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapseDataSource" class="collapse" aria-labelledby="headingDataSource"
+                         data-parent="#accordionDs">
+                        <div class="card-body">
+                            <!-- list filled here by javascript -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" id="headingTools">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                    data-target="#collapseTool" aria-expanded="false" aria-controls="collapseThree">
+                                Tools
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapseTool" class="collapse" aria-labelledby="headingTool" data-parent="#accordionDs">
+                        <div class="card-body">
+                            <!--  -->
+                            <ul id="toolsLinkList">
+                                <li><a data-tool-id="addParentDataSource">Add Parent Source</a></li>
+                                <li><a data-tool-id="addDataSource">Add Data Source</a></li>
+                                <li><a data-tool-id="addPortal">Add Portal</a></li>
+                                <li><a data-tool-id="showAllDataSources">Show Data Sources</a></li>
+                                <li><a data-tool-id="abc">...</a></li>
+                                <li><a data-tool-id="showDeactivatedDataSources">Show Deactivated Data Sources</a></li>
+                                <li><a data-tool-id="abc">...</a></li>
+                                <!--  <li><a data-tool-id="testchart">Test chart</a></li>   -->
+                                <li><a data-tool-id="abc">...</a></li>
+                                <li><a data-tool-id="testBarChart">Next Updates</a></li>
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-8 col-sm-offset-3 col-md-9 col-md-offset-2 main">
+            <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-10 col-md-10" id="right-content-container">
+                    <!--  javascript to fill here with table data -->
+                </div>
+
+                <div class="col-sm-2 col-md-2">
+                    <div class="accordion" id="accordionP">
+                        <!-- PORTALS accordion -->
+                        <div class="card">
+                            <div class="card-header" id="headingPortal">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse"
+                                            data-target="#collapsePortal" aria-expanded="true"
+                                            aria-controls="collapsePortal">
+                                        Portals
+                                    </button>
+                                </h5>
+                            </div>
+
+                            <div id="collapsePortal" class="collapse show" aria-labelledby="headingPortal"
+                                 data-parent="#accordionP">
+                                <div class="card-body">
+                                    <!-- list filled here by javascript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="datasourceLinksToPortalsModal" tabindex="-1">
+            <div class="modal-dialog ">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title" id="datasourceLinksToPortalsModal-title"></h4>
+                    </div>
+                    <div class="modal-body" id="datasourceLinksToPortalsModal-body">
+
+                        <!-- list filled here by javascript -->
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" id="btnLinkToPortalAccept" class="col-sm-1"
+                                data-dismiss="modal">
+                            Accept
+                        </button>
+                        <button class="btn btn-primary" id="btnLinkToPortalClose" class="col-sm-1" data-dismiss="modal">
+                            Close
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="modal fade" id="historyUpdatesModal" tabindex="-1">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button class="close" data-dismiss="modal"> X</button>
+                        <h4 class="modal-title" id="historyUpdatesModal-title"></h4>
+                    </div>
+                    <div class="modal-body" id="historyUpdatesModal-body">
+
+                        <table class="table table-condensed" id="historyUpdatesModal-table">
+                            <tr id="historyUpdatesTableHeadings">
+                                <th>Update Expected</th>
+                                <th>Received</th>
+                                <th>Moved to Master</th>
+                                <th>Processed</th>
+                                <th>Comments</th>
+                                <th class="updatedOntime"><p>Early</p>
+                                    <p class="overdue">Late</p>
+                            </tr>
+                            <tbody id="historyUpdatesModal-tablebody">
+                            <!-- javascript fills here with Deactiveted Data Sources table  -->
+                            </tbody>
+                        </table>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" id="btnhistoryUpdatesAccept" class="col-sm-1" type="button"
+                                data-dismiss="modal">
+                            Accept
+                        </button>
+                        <button class="btn btn-primary" id="btnhistoryUpdatesClose" class="col-sm-1" type="button"
+                                data-dismiss="modal">
+                            Close
+                        </button>
+                        <button class="btn btn-primary" id="btnhistoryUpdatesChart" class="col-sm-1" type="button"
+                                data-dismiss="modal">
+                            Chart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="modalBackground"></div>
+        <div id="modal">
+            <div id="chartContainer1" style="height: 160px; width: 100%;"></div>
+            <button id="closeBtn">Close</button>
+        </div>
+
+        <div class="modal fade" id="chartContainer11111111" tabindex="-1">
+            <div class="modal-dialog ">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button class="close" data-dismiss="modal"> X</button>
+                        <h4 class="modal-title" id="historyChartModal-title"></h4>
+                    </div>
+                    <div class="modal-body" id="historyChartModal-body">
+
+                        <!-- list filled here by javascript -->
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" id="btnHistoryChartClose" class="col-sm-1" data-dismiss="modal">
+                            Close
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+        <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+
+        <script src="js/bootstrap.bundle.js"></script>
+        <script src="js/scripts.js"></script>
+
+    </div>
+
+</div>
+</body>
+</html>
