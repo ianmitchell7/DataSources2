@@ -44,10 +44,10 @@ $(document).ready(function () {
 // todo bug - need to put html code for DS table, in earlier (few more lines above...) ian
         $.get('templates/datasourcesTable.html', function (data) {
             $('#dataSourceTable').html(data);  // show data source table HTML code
-                // get all data sources for the parent and load data table
-                sendRequest('/parentsource/' + dataSourceParentId + '/data', 'GET', null).then(function (value) {
-                    loadDataSourcesTableData(value, "noFiltering");
-                });
+            // get all data sources for the parent and load data table
+            sendRequest('/parentsource/' + dataSourceParentId + '/data', 'GET', null).then(function (value) {
+                loadDataSourcesTableData(value, "noFiltering");
+            });
         });
 
      // ?? showAndHighlightAccPortals(dataSourceParentId);  // show and highlight Accordion portals which are linked to selected Parent Source    ALREADY DONE ???
@@ -62,7 +62,7 @@ $(document).ready(function () {
     // SAVE button -- save Parent form
     $(document).on('click', '#btnParentSave', function (e) {
         if ($('#inputParentSourceName').val() !== "") {
-            var parentSourceId  = $('#inputParentSourceId').val();   // needed ??
+            var parentSourceId  = $('#inputParentSourceId').val();
             var parentSourceObj = {
                    parentSourceName: $('#inputParentSourceName').val(),
                    url:              $('#inputParentSourceUrl').val()
