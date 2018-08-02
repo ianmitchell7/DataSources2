@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-grid.min.css">
+    <link rel="stylesheet" href="css/bootstrap-grid.css">
+    <link rel="stylesheet" href="css/styles.css">
+  <!--  @import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");   -->
+    <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#"><img class="ew-image-navbar" src="img/loginlogo.png"> earlyWarning</a>
+        <div class="navButtons">
+            <button class="btn btn-primary" id="btnShowAllNextUpdates" type="button" data-dismiss="modal">
+                Main View
+            </button>
+            <button class="btn btn-primary" id="btnShowNextUpdatesChart" type="button" data-dismiss="modal">
+                Charts
+            </button>
+
+            <div class="btn-group">
+                <button class="btn btn-primary btn-default caret dropdown-toggle"  type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Tools
+                </button>
+                <ul class="dropdown-menu" id="toolsNavLinkList">
+                    <li><a data-tool-id="addParentDataSource">New Parent Source</a></li>
+                    <li><a data-tool-id="addDataSource">New Data Source</a></li>
+                    <li><a data-tool-id="addPortal">New Portal</a></li>
+                    <li><a data-tool-id="showDeactivatedDataSources">Deactivated Sources</a></li>
+                    <li><a data-tool-id="abc">...</a></li>
+                    <li><a data-tool-id="abc">Source Types</a></li>
+                    <li><a data-tool-id="abc">Update Methods</a></li>
+                    <li><a data-tool-id="abc">Update Intervals</a></li>
+                    <li><a data-tool-id="abc">EW Controllers</a></li>
+                    <li><a data-tool-id="abc">...</a></li>
+                </ul>
+            </div>
+            <button class="btn btn-primary btnDsTableFilter" id="btnDsTableFilter" type="button">
+                Table Filter
+            </button>
+            <button class="btn btn-primary d-none btnDsChartFilter" id="btnDsChartFilter" type="button">
+                Chart Filter
+            </button>
+
+        </div>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-2 leftDsNav">
+            <div class="accordion" id="accordionDs">
+                <!-- PARENT DATA SOURCES accordion -->
+                <div class="card">
+                    <div class="card-header" id="headingDataSourceParent">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                    data-target="#collapseDataSourceParent" aria-expanded="false"
+                                    aria-controls="collapsePDataSourceParent">
+                                Parents
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapseDataSourceParent" class="collapse" aria-labelledby="headingDataSourceParent"
+                         data-parent="#accordionDs">
+                        <div class="card-body">
+                            <!-- list filled here by javascript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DATA SOURCES accordion -->
+                <div class="card">
+                    <div class="card-header" id="headingDataSource">
+                        <h5 class="mb-0">
+                            <button id="dataSourceAccHeading" class="btn btn-link collapsed" value="" type="button" data-toggle="collapse"
+                                    data-target="#collapseDataSource" aria-expanded="false"
+                                    aria-controls="collapsePDataSource">
+                                Sources
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapseDataSource" class="collapse" aria-labelledby="headingDataSource"
+                         data-parent="#accordionDs">
+                        <div class="card-body">
+                            <!-- list filled here by javascript -->
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+
+        <div class="col-8" id="right-content-container">
+            <!--  javascript to fill here with table data -->
+        </div>
+
+        <div class="col-2 rightPortalsNav" >
+            <div class="accordion" id="accordionP">
+                <!-- PORTALS accordion -->
+                <div class="card">
+                    <div class="card-header" id="headingPortal">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse"
+                                    data-target="#collapsePortal" aria-expanded="true"
+                                    aria-controls="collapsePortal">
+                                Portals
+                            </button>
+                        </h5>
+                    </div>
+
+                    <div id="collapsePortal" class="collapse show" aria-labelledby="headingPortal"
+                         data-parent="#accordionP">
+                        <div class="card-body">
+                            <!-- list filled here by javascript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="datasourceLinksToPortalsModal" tabindex="-1">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" id="datasourceLinksToPortalsModal-title"></h4>
+                </div>
+                <div class="modal-body" id="datasourceLinksToPortalsModal-body">
+
+                    <!-- list filled here by javascript -->
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary col-sm-2" id="btnLinkToPortalAccept"  data-dismiss="modal">
+                        Accept
+                    </button>
+                    <button class="btn btn-primary col-sm-2 " id="btnLinkToPortalClose"  data-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<!-- vvvvvv -->
+
+    <div class="modal fade" id="portalLinksToDataSourcesModal" tabindex="-1">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" id="portalLinksToDataSourcesModal-title"></h4>
+                </div>
+                <div class="modal-body" id="portalLinksToDataSourcesModal-body">
+
+                    <!-- list filled here by javascript -->
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="btnLinkToDataSourcesAccept" class="col-sm-1" data-dismiss="modal">
+                        Accept
+                    </button>
+                    <button class="btn btn-primary" id="btnLinkToDataSourcesClose" class="col-sm-1" data-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<!-- ^^^^^ -->
+
+
+        <div class="modal fade"  id="historyUpdatesModal" tabindex="-1">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button class="close" data-dismiss="modal"> X </button>
+                        <h4 class="modal-title" id="historyUpdatesModal-title"></h4>
+                    </div>
+                    <div id="chartContainerPreviousUpdates" style="height: 200px; width: 100%">
+                    </div>
+
+                    <div class="modal-body" id="historyUpdatesModal-body">
+
+                        <table class="table table-condensed" id="historyUpdatesModal-table">
+                            <tr id="historyUpdatesTableHeadings">
+                                <th>Update Expected</th>
+                                <th>Update Received</th>
+                                <th>Moved to Master</th>
+                                <th>Portals Updated</th>
+                                <th>Comments</th>
+                                <th class="updatedOntime"><p>Early</p><p class="overdue">Late</p>
+                            </tr>
+                            <tbody id="historyUpdatesModal-tablebody">
+                                <!-- javascript fills here with Deactiveted Data Sources table  -->
+                        </tbody>
+                    </table>
+                </div>
+
+
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="btnhistoryUpdatesClose" class="col-sm-1" type="button" data-dismiss="modal">
+                        Close
+                    </button>
+                    <!--
+                    <button class="btn btn-primary" id="btnhistoryUpdatesChart" class="col-sm-1" type="button" data-dismiss="modal">
+                        Chart
+                    </button>
+                    -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade"  id="dependenciesModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" data-dismiss="modal"> X </button>
+                    <h4 class="modal-title" id="dependenciesModal-title"></h4>
+                </div>
+                <div class="modal-body" id="dependenciesModal-body">
+                    <div class="form-group">
+                        <table class="table table-condensed" id="dependentOnModal-table">
+                            <tr id="dependentOnTableHeadings">
+                                <th>Data Source</th>
+                                <th>Last Update Update</th>
+                                <th>Next Update Due</th>
+                                <th>Comments</th>
+                            </tr>
+                            <tbody id="dependentOnModal-tablebody">
+                            <!-- javascript fills here with "dependent on" Data Sources data source details  -->
+                            </tbody>
+                        </table>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary" id="btnDependentOnAccept" class="col-sm-1" data-dismiss="modal">
+                                Accept
+                            </button>
+                            <button class="btn btn-primary" id="btnDependentOnClose" class="col-sm-1" data-dismiss="modal">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+
+
+
+
+
+                    <div class="form-group">
+                        <label for="inputUpdateInterval" class="col-sm-3">Update Interval</label>
+                        <input type="text" class="col-sm-2 " name="inputUpdateInterval" id="inputUpdateInterval" value="">
+                    </div>
+
+
+
+                </div>
+
+
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="btndependenciesAccept" class="col-sm-1" type="button" data-dismiss="modal">
+                        Accept
+                    </button>
+                    <button class="btn btn-primary" id="btndependenciesClose" class="col-sm-1" type="button" data-dismiss="modal">
+                        Close
+                    </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+
+    <script src="js/bootstrap.bundle.js"></script>
+    <script src="js/scripts.js"></script>
+
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,427 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-size: 12px;
+}
+
+/* Create two unequal columns that floats next to each other */
+.column {
+    float: left;
+    padding: 10px;
+}
+.column2 {
+    float: left;
+    padding: 10px;
+}
+.left {width: 75%;}
+.right {width: 25%;}
+/* Clear floats after the columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+//   td {height:"50";}    doesn't work...'
+
+/* LEFT MENU */
+.leftDsNav, .rightPortalsNav {
+    padding-left: 0;
+    padding-right: 0;
+    background: #eee;
+}
+.leftDsNav {
+    border-right: 1px solid #ccc;
+}
+.rightPortalsNav {
+    border-left: 1px solid #ccc;
+}
+.leftDsNav .card,
+.rightPortalsNav .card {
+    border: none;
+}
+.leftDsNav .card-header,
+.rightPortalsNav .card-header{
+    padding: 0;
+    background-color: #eee;
+}
+.leftDsNav .card-header:hover,
+.rightPortalsNav .card-header:hover {
+    background-color: #ccc;
+}
+.leftDsNav .btn,
+.rightPortalsNav .btn {
+    font-size: 12px;
+    color: #212529;
+}
+
+/* DATA SOURCE MAINTANANCE */
+.actionDate {
+    width:150px;
+}
+
+ .tableREMOVED {float:left   }
+
+.active, .accordion:hover {
+    background-color: lightskyblue;
+}
+
+ul {
+  list-style-type: none;
+}
+
+li {
+  list-style-type : none;
+}
+
+fieldset {
+  border: 3px solid lightgray;
+}
+
+.panel {
+    padding: 0 18px;
+    display: none;
+    background-color: white;
+    overflow: hidden;
+}
+
+.button {
+     display: inline-block;
+     padding: 15px 25px;
+     font-size: 24px;
+     cursor: pointer;
+     text-align: center;
+     text-decoration: none;
+     outline: none;
+     color: #fff;
+     background-color: #e0e2ee;
+     border: none;
+     border-radius: 15px;
+     box-shadow: 0 9px #999;
+ }
+
+/*   .button:hover {background-color: #877faf}  */
+
+.late0day {
+   background-color: #a2f799;
+   font-weight: bold
+}
+.late1day {
+   background-color: #f5cdd2;
+   font-weight: bold
+}
+.late2days {
+   background-color: #f3adb6;
+   font-weight: bold
+}
+.lateOver3days {
+   background-color: #f595a1;
+   font-weight: bold
+}
+.lateOver7days {
+   background-color: #f36f7f;
+   font-weight: bold
+}
+.lateOver15days {
+   background-color: #f33f55;
+   font-weight: bold
+}
+
+.available0Day {
+   background-color: #f7f6e8;
+   font-weight: bold
+}
+.available1Day {
+   background-color: #f9f7c2;
+   font-weight: bold
+}
+.available2Days {
+   background-color: #f2efab;
+   font-weight: bold
+}
+.availableOver3Days {
+   background-color: #f2ed91;
+   font-weight: bold
+}
+.availableOver7Days {
+   background-color: #efe97f;
+   font-weight: bold
+}
+.availableOver14Days {
+   background-color: #efe75d;
+   font-weight: bold
+}
+
+.highlightPortal {
+   background-color: #b7cad5;
+}
+
+.dataSourceRow:hover {
+    background-color: #b7cad5;
+}
+
+.highlightParentAcc {
+   background-color: #b7cad5;
+}
+
+.highlightPortalClickAcc {
+   background-color: #79b8d3;
+}
+
+.highlightParentClickAcc {
+   background-color: #79b8d3;
+}
+
+li a:hover {
+    background-color: #b7cad5;
+}
+
+.deactivatedDataSourceTD:hover {
+    background-color: #b7cad5;
+}
+
+.blink {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+.datasourcesform {
+    background-color: #eee;
+    padding-top: 20px;
+}
+collapseDataSourceParent {background-color: #c1e5e7;}
+
+.portalsForm {background-color: #e0e2e8;}
+
+.parentsForm {background-color: #e6f7ef;}
+
+.textBoxGreen {background-color:#25a329;font-weight: bold;}
+
+fieldset.datesBorder {
+border-radius:8px;
+    border: 2px groove #ddd !important;
+    padding: 0 1.3em 0.1em 3em;
+    margin: 0 0 1.2em 0 !important;
+    -webkit-box-shadow:  0px 0px 0px 0px #000;
+            box-shadow:  0px 0px 0px 0px #000;
+}
+
+legend.datesBorder {
+    font-size: 1.5em !important;
+    font-weight: bold !important;
+    text-align: left !important;
+    width:auto;
+    padding:10px;
+    margin-bottom: 0;
+    border-bottom:none;
+}
+
+#nextUpdateSpacer {
+    margin-right: 17px;
+}
+
+#inputDsComments {
+    margin-left: 3em
+}
+
+chartContainer: {height:1100px;}
+
+.legendAutomatic {background-color: #62ee79; vertical-align: middle;text-align: center;font-weight: bold;height: 40px}
+.legendSemi {background-color: #8d8dae; vertical-align: middle;text-align: center;font-weight: bold;height: 40px}
+.legendManual {background-color: #ee4c5c; vertical-align: middle;text-align: center;font-weight: bold;height: 40px}
+.legendUndefined {background-color: pink; vertical-align: middle;text-align: center;font-weight: bold;height: 40px}
+
+
+/*
+input[type=checkbox]
+{
+  /* Double-sized Checkboxes */
+ /* -ms-transform: scale(2); /* IE */
+ /* -moz-transform: scale(2); /* FF */
+ /* -webkit-transform: scale(2); /* Safari and Chrome */
+ /* -o-transform: scale(2); /* Opera */
+/*  padding: 10px;
+}*/
+
+.rightAlign {text-align: right; }
+
+.blue {color: blue;}
+.overdue {color: red;}
+.dueToday {color: green;}
+.updatedOntime {color: green;}
+.updateReceived {color: #a3ab18;}
+
+.truncate {
+  width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.longTextReveal:hover{
+    overflow: visible;
+    white-space: normal;
+    width: auto;
+    position: absolute;
+    background-color:#FFF;
+}
+
+.urlLink:before {
+    content: "\f08e";
+    padding-right: 0.5em;
+    position: absolute;
+    top: 10px;
+    left: 0;
+}
+
+.form-group {
+    margin-bottom: 5px;
+}
+
+.modal-dialog {
+          width: 650px;
+        }
+.modal-header {
+    background-color: #337AB7;
+    padding:16px 16px;
+    color:#FFF;
+    border-bottom:2px dashed #337AB7;
+ }
+
+@media (min-width: 768px) {
+  .modal-xl {
+    width: 90%;
+   max-width:1000px;
+  }
+}
+<!---------------------->
+
+#chartModalBackground, #modal {
+    display: none;
+    position: fixed;
+}
+
+#chartModalBackground {
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.25);
+    z-index: 1;
+}
+
+#chartModal {
+    width: 80%;
+    top: 15%;
+
+    left: 10%;
+    background: white;
+    z-index: 2;
+}
+
+.chartLegend {
+vertical-align: middle;
+}
+
+
+
+.dsButtons {
+   margin: 10px;
+}
+
+.monthButtons {
+width: 50%;
+    margin: 0 25%;
+    text-align: center;
+}
+
+
+/* Some new styles */
+
+/* NAVBAR */
+.navbar.navbar-light {
+    border-bottom: 1px solid #ccc;
+}
+
+.ew-image-navbar {
+    width: 20px;
+}
+
+.navbar-brand {
+    font-size: 18px;
+    font-style: italic;
+}
+
+a.navbar-brand {
+    color: #000;
+}
+
+.navButtons .btn-primary {
+    background-color: #f8f9fa;
+    border-color: #f8f9fa;
+    font-size: 12px;
+    color: #212529;
+}
+
+.navButtons .btn-primary:hover {
+    background-color: #ccc;
+    border-color: #f8f9fa;
+    font-size: 12px;
+    color: #212529;
+}
+.dropdown-menu {
+    padding: .5rem;
+    font-size: 12px;
+}
+
+input[type="checkbox"] {
+    margin-right: 5px;
+}
+.dataSourcesTableFilter {
+    padding: 15px;
+}
+.ewControllerCheckBoxControl,
+ .updateIntervalCheckBoxControl {
+    margin-right: 50px;
+    margin-left: 30px;
+}
+.ewControllerCheckBoxControl ul,
+ .updateIntervalCheckBoxControl ul {
+    padding-left: 0;
+}
+.searchTextFilter {
+    margin-bottom: 20px;
+}
+
+
+#portalLinkList {
+    padding-left:0;
+}
+
+#dataSourceParentLinkList {
+    padding-left:0;
+}
+
+#dataSourceLinkList {
+    padding-left:0;
+}
+
+.card-header, .card-body {padding: 0 3px 0 3px}
+
+tr { line-height: 10px;}
+
+input[type=date], input[type=text] {
+    padding-top: 0;
+    padding-bottom: 0;
+    font-size: 12px;
+}
+
+.commentsBox {
+    font-size: 12px
+}
+
+#rightSideDates {rightAlign}
