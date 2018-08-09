@@ -4,11 +4,6 @@ var dataSourceLinkedPortalIds = [];   // storage for checked boxes, on DataSourc
 var portalLinkedDataSourcesIds = [];  // storage for checked boxes, on Portal / DataSources modal form
 var currentPortalLinkedDataSourcesIds = [];
 
-// re-direct to another web-page
-// window.location.href = 'http://www.example.com/';
-
-// .hasClass()
-
 var chartDate = new Date();
 
 $(document).ready(function () {
@@ -33,36 +28,31 @@ $(document).ready(function () {
 
         $("#dataSourceParentLinkList a").removeClass("highlightParentClickAcc");
         $(this).addClass("highlightParentClickAcc");
-    //    $('#dataSourceParentLinkList a').addClass('highlightParentClickAcc');
         var dataSourceParentId   = $(this).data('data-source-parent-id');
-       //  NEEDED ?? --->   var dataSourceParentName = $(this).data('data-source-parent-name');
         loadDataSourcesAcc(dataSourceParentId);
 
         displayParentForm();
         loadParentFormData(dataSourceParentId);
 
-// todo bug - need to put html code for DS table, in earlier (few more lines above...) ian
+
+// TODO -  BUG : Data Sources table not being display when click on Parent.  Need to click again.
+//      -  need to put html code for DS table, in earlier (few more lines above...) ian
+
         $.get('templates/datasourcesTable.html', function (data) {
             $('#dataSourceTable').html(data);  // show data source table HTML code
+
             // get all data sources for the parent and load data table
             sendRequest('/parentsource/' + dataSourceParentId + '/data', 'GET', null).then(function (value) {
                 loadDataSourcesTableData(value, "noFiltering");
             });
         });
-
-     // ?? showAndHighlightAccPortals(dataSourceParentId);  // show and highlight Accordion portals which are linked to selected Parent Source    ALREADY DONE ???
-
-     // TODO CHANGE HEADING of Data Source accordion button   --- cannot get to work...
-         //$('#dataSourceAccHeading').text($(this).data('data-source-parent-name'));
-         $("#dataSourceAccHeading").val("value","Hello world!").button("refresh");
-         //$("#headingDataSource").attr('value','aaaaaaaaaa').button("refresh");
-         //  $(this).data('data-source-parent-name')
+        $("#dataSourceAccHeading").val("value","Hello world!").button("refresh");
      });
 
     // SAVE button -- save Parent form
     $(document).on('click', '#btnParentSave', function (e) {
         if ($('#inputParentSourceName').val() !== "") {
-            var parentSourceId  = $('#inputParentSourceId').val();
+            var parentSourceId  = $('#inputParentSourceId').val();   // needed ??
             var parentSourceObj = {
                    parentSourceName: $('#inputParentSourceName').val(),
                    url:              $('#inputParentSourceUrl').val()
@@ -77,7 +67,6 @@ $(document).ready(function () {
                   var endpoint = '/parentsource/put/' + parentSourceId,
                       method   = "POST";  // workaround for word "PUT" ("PUT" does not work)
             }
-    //  TODO - delete Parent --     At the moment, can only Add and Amend parent
 
             // save Parent Source data, then re-display Parent accordion
             sendRequest(endpoint, method, parentSourceObj).then(function (value) {
@@ -132,7 +121,6 @@ $(document).ready(function () {
 
     });
 
-
     // Click on "Close" BUTTON -- close Parent form
     $(document).on('click', '#btnParentClose', function (e) {
         // re-display Parent data form
@@ -154,7 +142,6 @@ $(document).ready(function () {
         $("#portalLinkList a").removeClass("highlightPortalClickAcc");
     });
 
-
     // Click on BUTTON - "Main View" on main Navigation row
     $(document).on('click', '#btnShowAllNextUpdates', function (e) {
         showDataSourcesTableAndAccordion("noFiltering");
@@ -167,11 +154,8 @@ $(document).ready(function () {
 
         // show filter options for Data Source table
         buildEwControllerCheckBoxControl();
-        // TODO BUILD MONTHS drop-down list control        htmlDataSection    += htmlMonthsDataSection;
         $('.dataSourcesTableFilter').removeClass('d-none');   // show filters
-    });                 
-
-
+    });
 
     // Click on "Charts" -- button on main top Navigation bar
     $(document).on('click', '#btnShowNextUpdatesChart', function (e) {
@@ -181,29 +165,12 @@ $(document).ready(function () {
         $('.btnDsTableFilter').addClass('d-none');       // hide Data Source "Table Filter" button
 
         $.get('templates/chart.html', function (data) {
-
-    /*      var htmlDataSection = '<div class="chartFilter d-none" id="filterArea">';
-            htmlDataSection    += '   <div class="row searchTextFilter">';
-            htmlDataSection    += '      <label id="dsTableFilterSearchLabel" for="dsChartFilterSearchText" class="dsTableFilterSearchLabel col-sm-2">Search : </label>';
-            htmlDataSection    += '      <input id="dsChartFilterSearchText" class="dsChartFilterSearchText col-sm-4" type="text" placeholder="data source name - seach text" value="">';
-            htmlDataSection    += '   </div>';
-            htmlDataSection    += '   <div class="row">';
-            htmlDataSection    += '      <div class="col-md-6 updateIntervalCheckBoxControl col-">';
-            htmlDataSection    += '      </div>';
-            htmlDataSection    += '      <div class="col-md-6 ewControllerCheckBoxControl">';
-            htmlDataSection    += '      </div>';
-            htmlDataSection    += '   </div>';
-            htmlDataSection    += '</div>';
-            htmlDataSection    += '<div class="row" id="chartContainer"></div>';
-            htmlDataSection    += '<div class="row" id="chartFooter"></div>';*/
-            $('#right-content-container').html(data);
+            $('#right-content-container').html(data);    // show chart (HTML part)
         });
-        //initialiseFiltersToAll();   -- CANNOT USE FUNCTION BECAUSE OF ASYNCHRONOUS TIMING PROB
 
         $('#dsChartFilterSearchText').val("");        // reset filter search text
 
-        //  buildEwControllerCheckBoxControl();   // set all checkboxes to "checked"   -- CANNOT USE FUNCTION BECAUSE OF ASYNCHRONOUS TIMING PROB
-            // build HTML for Data Source Controller checkboxes, for filter (for table and chart)
+        // build HTML for Data Source Controller checkboxes, for filter (for table and chart)
         sendRequest('/ewcontrollers', 'GET', null).then(function (value) {
             var htmlDsControllerCheckBoxControlSection = '<li>';
             htmlDsControllerCheckBoxControlSection += 'Controller';
@@ -214,10 +181,8 @@ $(document).ready(function () {
             };
             htmlDsControllerCheckBoxControlSection += '</ul>';
             htmlDsControllerCheckBoxControlSection += '</li>';
-            //var prevHtml = $('#EwControllerCheckBoxControl').html();
             $('.ewControllerCheckBoxControl').html(htmlDsControllerCheckBoxControlSection);  // display filter section
 
-            //  buildUpdateIntervalCheckBoxControl();   // set all checkboxes to "checked"   -- CANNOT USE FUNCTION BECAUSE OF ASYNCHRONOUS TIMING PROB
             // build HTML for Update Interval checkboxes, for filter (for table and chart)
             sendRequest('/updateintervals', 'GET', null).then(function (value) {
                 var htmlUpdateIntervalCheckBoxControlSection = '<li>';
@@ -229,7 +194,6 @@ $(document).ready(function () {
                 };
                 htmlUpdateIntervalCheckBoxControlSection += '</ul>';
                 htmlUpdateIntervalCheckBoxControlSection += '</li>';
-                //var prevHtml = $('#EwControllerCheckBoxControl').html();
                 $('.updateIntervalCheckBoxControl').html(htmlUpdateIntervalCheckBoxControlSection);  // display filter section
 
                 drawChart("nextUpdates",getTodaysDate());
@@ -239,12 +203,11 @@ $(document).ready(function () {
 
     // Click on "Charts Filter" -- button on main Navigation row
     $(document).on('click', '#btnDsChartFilter', function (e) {
-         $('.chartFilter').removeClass('d-none');         // remove "hide" class -- i.e. show the filters
+         $('.chartFilter').removeClass('d-none');          // remove "hide" class -- i.e. show the filters
          $('.btnDsChartFilter').addClass('d-none');        // remove "hide" class -- i.e. show the Filter button
 
          // show filter options for Data Source chart
          initialiseFiltersToAll();
-         // TODO BUILD MONTHS drop-down list control        htmlDataSection    += htmlMonthsDataSection;
     });
 
 //--------------  D A T A   S O U R C E  -------------------
@@ -252,8 +215,8 @@ $(document).ready(function () {
     // click on row in Data Source table
     $(document).on('click', '.dataSourceRowName', function (e) {
         e.preventDefault();
-        $('.btnDsChartFilter').addClass('d-none');       // add "hide" class - i.e. remove chart Filter button
-        $('.btnDsTableFilter').addClass('d-none');       // add "hide" class - i.e. remove table Filter button
+        $('.btnDsChartFilter').addClass('d-none');        // add "hide" class - i.e. remove chart Filter button
+        $('.btnDsTableFilter').addClass('d-none');        // add "hide" class - i.e. remove table Filter button
         var dataSourceId = $(this).data('data-source-id');
         var activeDataSource = 1;
         showDataSourcesFormAndPortalTable(dataSourceId, activeDataSource);
@@ -262,12 +225,11 @@ $(document).ready(function () {
     // click in Data Source Accordion list - display Data Source form and linked portals (Portals table)
     $(document).on('click', '#dataSourceLinkList a', function (e) {
        e.preventDefault();
-       $('.btnDsChartFilter').addClass('d-none');       // add "hide" class - i.e. remove chart Filter button
-       $('.btnDsTableFilter').addClass('d-none');       // add "hide" class - i.e. remove table Filter button
-       $('.searchTextFilter').addClass('d-none');       // add "hide" Data Source table search-text filter
-       $('#dsTableFilterSearchText').val("");          // reset filter search text
-       $('#dsChartFilterSearchText').val("");          // reset filter search text
-    //   $('.btnDsTableFilterSearchLabel').addClass('d-none'); // add "hide" Data Source table search-text filter
+       $('.btnDsChartFilter').addClass('d-none');         // add "hide" class - i.e. remove chart Filter button
+       $('.btnDsTableFilter').addClass('d-none');         // add "hide" class - i.e. remove table Filter button
+       $('.searchTextFilter').addClass('d-none');         // add "hide" Data Source table search-text filter
+       $('#dsTableFilterSearchText').val("");             // reset filter search text
+       $('#dsChartFilterSearchText').val("");             // reset filter search text
 
        var dataSourceId = $(this).data('data-source-id');
        var activeDataSource = 1;
@@ -364,7 +326,6 @@ $(document).ready(function () {
               sourceType:          selectedSourceTypeId,
               updateMethod:        selectedUpdateMethodId,
           };
-       //    console.log("dataSourceObj " +  JSON.stringify(dataSourceObj));
 
           if (dataSourceId == "") {
              // INSERT
@@ -406,7 +367,7 @@ $(document).ready(function () {
                   };
               }
 
-              if (dataSourceId == "") {dataSourceId = value.dataSourceId;};   // returned back, after having done INSERT
+              if (dataSourceId == "") {dataSourceId = value.dataSourceId;};   // returned back, after having done SQL INSERT
 
               // add newly linked Portals to the "Portals / Data Sources" xref table
               for (var i = 0; i < dataSourceLinkedPortalIds.length ; i++) {
@@ -424,41 +385,15 @@ $(document).ready(function () {
                       sendRequest(endpoint, method, portalSourcesObj); // INSERT to PortalSources xref data table
                    };
                };
-
                displayDataSourceForm();
                alert(dataSourceObj.dataSourceName + " saved successfully !");
-
-//               displayParentForm();
-//               $('#btnParentSave').addClass('d-none');    // remove save button
-//               $('#btnParentClose').addClass('d-none');   // remove cloee button
-//               $('#btnParentAdd').addClass('d-none');     // remove add button
-//               $('#btnParentDelete').addClass('d-none');  // remove delete button
-
-showDataSourcesTableAndAccordion("noFiltering");
-
-            /*     old code for showing Parent and its data sources, after saving the data source. Replaced bu showing data source table
-
-               loadParentFormData(selectedParentSourceId);
-
-               $.get('templates/datasourcesTable.html', function (data) {
-                   $('#dataSourceTable').html(data);  // get and show data source table HTML code
-                   // get all data sources for the parent and load data table
-                     sendRequest('/parentsource/' + selectedParentSourceId + '/data', 'GET', null).then(function (value) {
-                       loadDataSourcesTableData(value, "noFiltering");
-                       $('#portalLinkList.highlightPortal').addClass('d-none');    // remove highlighting on Portal accordion column
-                   });
-               });
-               showAndHighlightAccPortals(selectedParentSourceId);         // show and highlight Accordion portals which are linked to selected Parent Source
-               loadDataSourcesAcc(selectedParentSourceId);
-            //   $("#btnParentAddDataSource").prop("disabled", true);  // disable SAVE until all fields are entered
-            */
-
+               showDataSourcesTableAndAccordion("noFiltering");
           });
 
         } else {
            alert('CANNOT SAVE - please enter : (1) "Data Source Name", (2) "Parent", (3) "Interval" (4) "Early Warning Controller"');
         }
-     });    // end of click on BUTTON - SAVE Data Sources
+     });      // end of click on BUTTON - SAVE Data Sources
 
      // click on "Close" BUTTON -- Data Sources form
      $(document).on('click', '#btnDataSourceClose', function (e) {
@@ -479,7 +414,7 @@ showDataSourcesTableAndAccordion("noFiltering");
              var htmlDataSection = '<ul>';
              for (var i = 0; i < value.length ; i++) {
                   var portalId = value[i].portalId;
-                  htmlDataSection += '<li><input type="checkbox" value="' + portalId + '"';     // + '" data-chk-portalid="' + portalId     needed ??
+                  htmlDataSection += '<li><input type="checkbox" value="' + portalId + '"';
                   if ($.inArray(portalId, dataSourceLinkedPortalIds) != -1) {
                      htmlDataSection += " checked";
                    }
@@ -514,15 +449,16 @@ showDataSourcesTableAndAccordion("noFiltering");
           $('#inputDeactivated').val(todaysDate);
       });
 
+// TODO -- DEPENDANCIES
       // click on BUTTON -- "Dependencies"
-//      $(document).on('click', '#btnDependencies', function (e) {
-//          var dataSourceName = $('#inputDataSourceName').val();
-//
-//          select btnDependenciesloop thru, build 2 lists - dependent on / dependent for
-//          fill 2 html sections
-//
-//
-//      });
+        //      $(document).on('click', '#btnDependencies', function (e) {
+        //          var dataSourceName = $('#inputDataSourceName').val();
+        //
+        //          select btnDependenciesloop thru, build 2 lists - dependent on / dependent for
+        //          fill 2 html sections
+        //
+        //
+        //      });
 
 
 
@@ -582,12 +518,6 @@ showDataSourcesTableAndAccordion("noFiltering");
          if (wacheteUrl !== "") {window.open(wacheteUrl, '_blank');};
     });
 
-    // click on BUTTON -- "Close" on modal form : Link to Portal
-    $(document).on('click', '#btnLinkToPortalClose', function (e) {
-       // anything to do ??      does automatic :  $('#mainModal').modal('hide');
-       // reset new links variable ?
-    });
-
 
 //--------------  P O R T A L  -------------------
 
@@ -599,9 +529,6 @@ showDataSourcesTableAndAccordion("noFiltering");
 
         $("#portalLinkList a").removeClass("highlightPortalClickAcc");
         $(this).addClass("highlightPortalClickAcc");
-
-//        <label for="inputEwControllerPortal" class="col-sm-2">Early Warning controller</label>
-//        <input type="text" class="col-sm-2 inputEwControllerPortal" placeholder="" name="url" id="inputEwControllerPortal" value="">
 
         // get the Portals's data and display form and data, then display Data Sources linked this Portal
         $.get('templates/portalsForm.html', function (data) {
@@ -660,7 +587,7 @@ showDataSourcesTableAndAccordion("noFiltering");
                 for (var i = 0; i < currentPortalLinkedDataSourcesIds.length ; i++) {
                     currentDataSourcesId = currentPortalLinkedDataSourcesIds[i];
                     if ($.inArray(currentDataSourcesId, portalLinkedDataSourcesIds) == -1) {
-                       // data source was unchecked - delete PortalSource (xref) item for this Portal id
+                       // (data source was unchecked - delete PortalSource (xref) item for this Portal id)
                        endpoint = "/portalsourcelink/delete/data/" + currentDataSourcesId + "/" + portalId;
                        method   = "POST";
                        sendRequest(endpoint, method, null);
@@ -728,35 +655,6 @@ showDataSourcesTableAndAccordion("noFiltering");
         });
     });
 
-    // DELETE button -- delete Portal
-    //    is this is use ??
-    $(document).on('click', '#btnPortalDelete', function (e) {
-
-        var portalId           = $('#inputPortalId').val(),
-            portalName         = $('#inputPortalName').val(),
-            portalUrl          = $('#inputPortalUrl').val(),
-            ewControllerPortal = $('#inputEwControllerPortal').val();
-        var endpoint   = '/portalsource/delete/portal/' + portalId,
-            method     = "POST";
-
-        sendRequest(endpoint, method, null);
-
-        endpoint   = '/portal/delete/' + portalId,
-        method     = "POST";
-        sendRequest(endpoint, method, null);
-
-        alert(portalName + " deleted successfully");
-        // re-display new empty Portal form
-        $.get('templates/portalsForm.html', function (data) {
-            $('#right-content-container').html(data);
-        });
-
-        // re-display Portals accordion column
-        sendRequest('/portal', 'GET', null).then(function (data) {
-            loadPortalsAcc(data, null);
-        })
-    });
-
     // Click on "URL" -- button on Data Sources table row
     $(document).on('click', '.portalURL', function (e) {
          var url = $(this).data('url');
@@ -774,11 +672,8 @@ showDataSourcesTableAndAccordion("noFiltering");
 
         // build HTML section, for Data Sources checkbox modal form
 
-        // get ALL Data Sources      @param   //  "/datasource?sourceId=" + dataSourceId + "&portal=" + ....
-                                              //  @param   queryParams
-                                              // JAVA :  Long id = Long.valueOf(request.queryParams(String sortby));
+        // get ALL Data Sources
         sendRequest('/datasource', 'GET', null).then(function (value) {
-     // sendRequest('/datasource?sortby="alpha"', 'GET', null).then(function (value) {
 
             // get list of Data Sources, build HTML code
             var htmlDataSection = '<ul>';
@@ -790,10 +685,10 @@ showDataSourcesTableAndAccordion("noFiltering");
                  }
                  htmlDataSection += '>' + value[i].dataSourceName + '</li>';
             };
-           htmlDataSection += '</ul>';
-           $('#portalLinksToDataSourcesModal-title').html("Data Sources used by Portal\n\n : " + portalName);
-           $('#portalLinksToDataSourcesModal-body').html(htmlDataSection);    // insert HTML Data Sources modal form (checkboxes)
-           $('#portalLinksToDataSourcesModal').modal('show');
+            htmlDataSection += '</ul>';
+            $('#portalLinksToDataSourcesModal-title').html("Data Sources used by Portal\n\n : " + portalName);
+            $('#portalLinksToDataSourcesModal-body').html(htmlDataSection);    // insert HTML Data Sources modal form (checkboxes)
+            $('#portalLinksToDataSourcesModal').modal('show');
         });
     });
 
@@ -811,9 +706,9 @@ showDataSourcesTableAndAccordion("noFiltering");
          });
      });
 
-//-----------------------  H I S T O R Y   U P D A T E S  ----------------------------
+//--------------------  P R E V I O U S    U P D A T E S  ---------------------------
 
-   // click on BUTTON -- "View Previous Updates" (modal form for History Updates)
+    // click on BUTTON -- "View Previous Updates" (modal form for history of Updates)
     $(document).on('click', '#btnDataSourceHistoryUpdates', function (e) {
 
         var dataSourceName = $('#inputDataSourceName').val();
@@ -827,7 +722,7 @@ showDataSourcesTableAndAccordion("noFiltering");
             for (var i = 0; i < value.length ; i++) {
                  var portalId = value[i].portalId;
 
-                // htmlDataSection += '<td>' + value[i].updateExpectedEarliest + '</td>';
+                 // htmlDataSection += '<td>' + value[i].updateExpectedEarliest + '</td>';
                  htmlDataSection += '<td>' + value[i].nextUpdateDue              + '</td>';
                  htmlDataSection += '<td>' + value[i].updateReceived             + '</td>';
                  htmlDataSection += '<td>' + value[i].updateTransferredToMaster  + '</td>';
@@ -848,43 +743,19 @@ showDataSourcesTableAndAccordion("noFiltering");
             $('#historyUpdatesModal-title').html(dataSourceName);
             $('#historyUpdatesModal-tablebody').html(htmlDataSection);    // insert HTML code to History Updates modal form
             $('#historyUpdatesModal').modal('show');
-              showPreviousUpdatesChart();
+            showPreviousUpdatesChart();
         });
     });
-
-/*
-    // click on BUTTON -- "Chart" on modal form : History Updates
-   $(document).on('click', '#btnhistoryUpdatesChart', function (e) {
-        showPreviousUpdatesChart();
-     });
-*/
-
-
-    // click on BUTTON -- "Accept" on modal form : History Updates
-    $(document).on('click', '#btnHistoryUpdatesAccept', function (e) {
-
-
-
-         // allow updates ??    --- check for updates and update HistoryUpdates table
-
-
-    });
-
-
 
     // click on BUTTON -- "Close" on modal form : History Updates
     $(document).on('click', '#btnHistoryUpdatesClose', function (e) {
        // anything to do ??      does automatic :  $('#mainModal').modal('hide');
     });
 
-
-
-
-//  onComplete="$('#historyUpdatesModal').modal('hide');$('body').removeClass('modal-open');$('.modal-backdrop').remove();"
-
-
-
 //---------------  D e a c t i v a t e   -----------------------------------
+
+    // All "Deactivating" program program code can be deleted...
+
 
     $(document).on('click', '#btnDeactivatedDataSourceAccept', function (e) {
          var boxes = $(":checkbox:checked")
@@ -921,7 +792,7 @@ showDataSourcesTableAndAccordion("noFiltering");
         showDataSourcesFormAndPortalTable(dataSourceId, activeDataSource);
     });
 
-// ---------    f i l t e r s    --    i n s t a n t   e f f e c t   ------------------
+// ---------   f i l t e r s  (main table)   --    i n s t a n t   e f f e c t   ------------------
 
     $(document).on('click', '.dataSourcesTableFilter .ewController', function (e) {
         sendRequest('/datasource', 'GET', null).then(function (value) {
@@ -959,6 +830,8 @@ showDataSourcesTableAndAccordion("noFiltering");
         })
     });
 
+// ---------   f i l t e r s  (chart)   --    i n s t a n t   e f f e c t   ------------------
+
     $(document).on("keyup",".dsChartFilterSearchText", function(){
         drawChart("nextUpdates",getTodaysDate());
     });
@@ -973,28 +846,25 @@ showDataSourcesTableAndAccordion("noFiltering");
          drawChart("nextUpdates",getTodaysDate());
     });
 
-
-
     $(document).on('click', '#decreaseMonthButton', function () {
         chartDate.setMonth(chartDate.getMonth() -1);
         drawChart("nextUpdates", chartDate.toISOString().slice(0, 10));
     });
 
     $(document).on('click', '#increaseMonthButton', function () {
-            chartDate.setMonth(chartDate.getMonth() +1);
-            drawChart("nextUpdates", chartDate.toISOString().slice(0, 10));
-        });
+        chartDate.setMonth(chartDate.getMonth() +1);
+        drawChart("nextUpdates", chartDate.toISOString().slice(0, 10));
+    });
 
 //--------------  N A V I G A T I O N   B A R  ------------------
 
     // Click in "Tools" Drop Down list
     $(document).on('click', '#toolsNavLinkList a', function (e) {
-         e.preventDefault();
-         $('.btnDsChartFilter').addClass('d-none');       // add "hide" class - i.e. remove chart Filter button
-         $('.btnDsTableFilter').addClass('d-none');       // add "hide" class - i.e. remove table Filter button
-      //   $('.btnDsTableFilterSearchLabel').addClass('d-none '); // add "hide" Data Source table search-text filter
+          e.preventDefault();
+          $('.btnDsChartFilter').addClass('d-none');       // add "hide" class - i.e. remove chart Filter button
+          $('.btnDsTableFilter').addClass('d-none');       // add "hide" class - i.e. remove table Filter button
 
-         var toolId = $(this).data('tool-id');
+          var toolId = $(this).data('tool-id');
           switch(toolId) {
               case "addParentDataSource":
                     displayParentForm();
@@ -1015,10 +885,8 @@ showDataSourcesTableAndAccordion("noFiltering");
                    break;
               default:
                 break;
-                  // code block
           }
     });
-
 
 
 //--------------   G e n e r a l   -------------------
@@ -1040,12 +908,7 @@ showDataSourcesTableAndAccordion("noFiltering");
         })
     });
 
-    $(document).on("mouseleave","tr", function (event) {
-       // do anything ?
-       // unhighlight ?
-    });
-});   // end of main "document.ready" function
-
+});                   // end of main "document.ready" function
 
 //======================================================================
 //==========  F U N C T I O N S  =======================================
@@ -1118,9 +981,7 @@ function removeHighlightsPortalsAcc() {
 function drawChart(dataTypeToShow, monthYearToShow) {
     var monthNames = getMonthNames();  //(array : January, ...., December)
     var displayMonth = monthYearToShow.slice(5, 7);
- //   displayMonth = "08";   change', to show a specific month other than "this month".
     var displayYear  = monthYearToShow.slice(0, 4);
-    var htmlMonthsDataSection = makeMonthsDropDownList();
     var noUpdatesText = "";
 
     //---- Filtering - setup : build arrays, check values -----
@@ -1234,7 +1095,7 @@ function drawChart(dataTypeToShow, monthYearToShow) {
                    //legendText: "[Automatic,Semi-manual]",
                    //legendMarkerColor: "[green,blue]",
                    toolTipContent: "{label}",
-                  dataPoints: chartData,
+                   dataPoints: chartData,
               }]
            };
         //   console.log("pp options = " + JSON.stringify(options)); // display object
@@ -1307,31 +1168,6 @@ function buildUpdateIntervalCheckBoxControl() {
     });
 }*/
 
-function makeMonthsDropDownList() {
-
-  return "";  // for testing
-//newdate = date.replace(/-|\//g, "");
-//    var monthNames = getMonthNames();  //(array : January, ...., December)
-
-//    var todaysDate = getTodaysDate();   //(yyyy+'-'+mm+'-'+dd ;)
-//    var mm         = todaysDate.slice(5, 7);
-//    var yyyy       = nextUpdate.slice(0, 4);
-//
-//    //var dropDown = document.getElementById("Month_list");
-//    var dropDown = $("Month_list");
-//    var htmlMonthsDataSection = '<div id="chartContainerSelections">';
-//    htmlMonthsDataSection    += 'Month : ';
-//    htmlMonthsDataSection    += '<select>';
-//    for (var i = 0; i < 12 ; i++) {
-//
-//        htmlMonthsDataSection += '<option value="01-' + mm + '-' + year>' + monthName + ' ' + year + '</option>';
-//
-//    }
-//    htmlMonthsDataSection += '</select>';
-//    htmlMonthsDataSection += "</div>";
-//    return htmlMonthsDataSection;
-}
-
 function getMonthNames() {
     var monthNames = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
     return monthNames;
@@ -1379,7 +1215,6 @@ function addNewPortal() {
     });
     portalLinkedDataSourcesIds = "";    // (reset, for Linked to Data Sources modal form)
 }
-
 
 function loadDataSourcesTableHtml() {
     $.get('templates/datasourcesTable.html', function (data) {
@@ -1457,9 +1292,9 @@ function displayDataSourceForm() {
 function displayParentForm() {
     $.get('templates/parentsForm.html', function (data) {
        $('#right-content-container').html(data);
-       $('#btnParentDelete').addClass('d-none');    // remove DELETE button
+       $('#btnParentDelete').addClass('d-none');       // remove DELETE button
     //    $('#btnParentAdd').addClass('d-none');       // remove NEW button
-       $("#btnParentSave").prop("disabled", true);  // disable SAVE until all fields are entered
+       $("#btnParentSave").prop("disabled", true);     // disable SAVE until all fields are entered
     });
 }
 
@@ -1508,8 +1343,6 @@ function buildUpdateIntervalDropDownList(updateIntervalId) {
     });
 }
 
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
 function buildUpdateMethodDropDownList(updateMethodId) {
     var htmlDataSection  = '<div class="form-group row">';
         htmlDataSection += '<label for="updateMethodList" class="col-sm-3">Update Method</label>';
@@ -1531,9 +1364,8 @@ function buildUpdateMethodDropDownList(updateMethodId) {
     });
 }
 
-
-// build drop-down list for Early Warning Controllers
 function buildEwControllerDropDownList(ewControllerId) {
+    // build drop-down list for Early Warning Controllers
     var htmlDataSection  = '<div class="form-group row">';
         htmlDataSection += '<label for="ewControllerList" class="col-md-3">EW Controllller</label>';
         htmlDataSection += '<select id="ewControllerList" col-md-4 inputDataSourceChange>';
@@ -1554,9 +1386,8 @@ function buildEwControllerDropDownList(ewControllerId) {
     });
 }
 
-
-// build drop-down list for Source Types (Excel, PDF etc)
 function buildSourceTypeDropDownList(sourceType) {
+    // build drop-down list for Source Types (Excel, PDF etc)
     var htmlDataSection  = '<div class="form-group row">';
         htmlDataSection += '<label for="sourceTypeList" class="col-sm-3">SourceType</label>';
         htmlDataSection += '<select id="sourceTypeList" col-sm-4 inputDataSourceChange>';
@@ -1571,7 +1402,6 @@ function buildSourceTypeDropDownList(sourceType) {
               htmlDataSection += ' selected="selected"';
            }
            htmlDataSection += ' value="' + value[i].sourceTypeId + '">' + value[i].sourceTypeName + '</option>';  // value and text
-
         };
         htmlDataSection += '</select>';
         htmlDataSection += '</div>';
@@ -1614,12 +1444,12 @@ function showDataSourcesFormAndPortalTable(dataSourceId, activeDataSource) {
 
     // get list of CURRENTLY linked-to portals for modal form
     sendRequest('/portalsource/data/' + dataSourceId, 'GET', null).then(function (value) {
-      // make array, for portalIds, for checkboxes
-         dataSourceLinkedPortalIds = [];
-         for (var i = 0; i < value.length ; i++) {
+        // make array, for portalIds, for checkboxes
+        dataSourceLinkedPortalIds = [];
+        for (var i = 0; i < value.length ; i++) {
             dataSourceLinkedPortalIds[i] = value[i].portalId;
-         }
-         currentDataSourceLinkedPortalIds = dataSourceLinkedPortalIds;  // make copy, for comparisson purposes, when saving
+        }
+        currentDataSourceLinkedPortalIds = dataSourceLinkedPortalIds;  // make copy, for comparisson purposes, when saving
     });
 
     // show all portals for this data source
@@ -1627,17 +1457,6 @@ function showDataSourcesFormAndPortalTable(dataSourceId, activeDataSource) {
     sendRequest('/datasource/' + dataSourceId + '/portals', 'GET', null).then(function (value) {
         loadPortalsTableData(value);
     });
-
-/*  "DEACTIVATE" program code, NO LONGER IN USE
-    if (activeDataSource = true) {
-        // deactivate all buttons and input elements  --- not working
-           //$("#datasourcesform :input").prop("disabled", true);
-           //$("input, select, option, textarea", "#datasourcesform").prop('disabled',true);
-        $("*", ".datasourcesform").prop('disabled',true);
-
-        $("#datasourcesform input[type=button]").attr("disabled", "disabled");
-    }
-*/
 };
 
 //----------------- make Accordion column ---------------------
@@ -1682,10 +1501,10 @@ function loadPortalsAcc(data, highlightPortalIds) {
 }
 
 function showDataSourcesTableAndAccordion(filterType) {
-    $('.btnDsChartFilter').addClass('d-none');     // add "hide" class - i.e. remove chart Filter button
-    $('.btnDsTableFilter').removeClass('d-none');  // show table Filter button
-    loadDataSourcesAcc("");      // show accordion
-    loadDataSourcesTableHtml();  // show table headings
+    $('.btnDsChartFilter').addClass('d-none');      // add "hide" class - i.e. remove chart Filter button
+    $('.btnDsTableFilter').removeClass('d-none');   // show table Filter button for Data Sources table
+    loadDataSourcesAcc("");                         // show accordion for Data Sources
+    loadDataSourcesTableHtml();                     // show table headings
     initialiseFiltersToAll();
     sendRequest('/datasource', 'GET', null).then(function (value) {
         loadDataSourcesTableData(value, filterType);  // show Data Source table data
@@ -1693,11 +1512,11 @@ function showDataSourcesTableAndAccordion(filterType) {
 }
 
 function initialiseFiltersToAll() {
-        $('#dsTableFilterSearchText').val("");        // reset filter search text
-        $('#dsChartFilterSearchText').val("");        // reset filter search text
-        buildEwControllerCheckBoxControl();           // set all checkboxes to "checked"
-        buildUpdateIntervalCheckBoxControl();         // set all checkboxes to "checked"
-        $( "#receivedButNotCompleted" ).prop( "checked", false );  // uncheck filter for "Receuved but not completed"
+    $('#dsTableFilterSearchText').val("");          // reset filter search text
+    $('#dsChartFilterSearchText').val("");          // reset filter search text
+    buildEwControllerCheckBoxControl();             // set all checkboxes to "checked"
+    buildUpdateIntervalCheckBoxControl();           // set all checkboxes to "checked"
+    $( "#receivedButNotCompleted" ).prop( "checked", false );  // uncheck filter for "Receuved but not completed"
 }
 
 function loadDataSourceParentsAcc(data) {
@@ -1746,62 +1565,20 @@ function loadDataSourcesAcc(dataSourceParentId) {
     });
 }
 
-//------------------ make tables ------------------------
-
-// Portals table data values
 function loadPortalsTableData(data) {
+    // build Portals table HTML code
 
-    sendRequest('/ewcontrollers', 'GET', null).then(function (value) {
-        // make array with Early Warning Controllers (from EwControllers table)
-//        var ewControllerIds = [];
-//            ewControllerIdNames = [];
-//        $(value).each(function() {
-//           ewControllerIds.push($(this).ewControllerId());
-//           ewControllerIdNames.push($(this).ewControllerName());
-//        });
+    var htmlDataSection = '';
+    var ewIndex = "";
 
-        var htmlDataSection = '';
-        var ewIndex = "";
-
-        for (var i = 0; i < data.length ; i++) {
-            htmlDataSection += '<tr>';
-            htmlDataSection += '<td>' + data[i].portalName + '</td>';
-
-            // var ewIndex        = ewControllerIds.indexOf(data[i].ewControllerPortal);
-            // ewControllerIdNames[ewIndex];
-            // ewControllerIdName = "..."
-            // htmlDataSection += '<td>' + ewControllerIdName + '</td>';
-            var outputUrl = "";
-            if (data[i].url.length > 15) {
-               outputUrl = data[i].url.slice(0, 5) + "..." + data[i].url.slice(data[i].url.length-8, data[i].url.length);
-            } else {
-               outputUrl = data[i].url;
-            }
-            outputUrl = "URL";
-      // htmlDataSection    += '<td longTextReveal"><input type="button" class="dsTableURL" data-url="' + data[i].url + '" value="' + outputUrl + '"</td>';
-
-            htmlDataSection += '<td longTextReveal" ><input type="button" class="portalURL"  data-url="' + data[i].url + '" value="' + outputUrl + '"</td>';
-            htmlDataSection += '</tr>';
-        };
-        $('#portaltablebody').html(htmlDataSection);
-     });
+    for (var i = 0; i < data.length ; i++) {
+        htmlDataSection += '<tr>';
+        htmlDataSection += '<td>' + data[i].portalName + '</td>';
+        htmlDataSection += '<td longTextReveal" ><input type="button" class="portalURL"  data-url="' + data[i].url + '" value="URL"</td>';
+        htmlDataSection += '</tr>';
+    };
+    $('#portaltablebody').html(htmlDataSection);
 }
-
-/*function getDifferenceInDays(nextUpdateDate, ) {
-
-    var millisecondsPerDay = '';
-    var millisBetween      = '';
-    var numberOfdaysLate   = '';
-    var warningColour      = '';
-    var todaysDate         = getTodaysDate();
-    var startDay           = new Date(nextUpdateDate);
-    var endDay             = new Date(todaysDate);
-
-    millisecondsPerDay     = 1000 * 60 * 60 * 24;
-    millisBetween          = startDay.getTime() - endDay.getTime();
-    numberOfdaysDifference = millisBetween / millisecondsPerDay;
-    return Number(numberOfdaysDifference);
-}*/
 
 function getDifferenceInDays(startDate, endDate) {
 
@@ -1832,10 +1609,6 @@ function getTodaysDate() {
 function loadDataSourcesTableData(data, filterType) {
     sendRequest('/historyupdates/alllastactive', 'GET', null).then(function (value) {
         // get all "active updates" dates, for all Data Sources
-/*        var allLastActiveUpdates = [];
-        for (var i = 0; i < value.length ; i++) {
-           allLastActiveUpdates[value[i].dataSourceId.toString()] = value[i].updateReceived;    // prwevious updates received dates
-        };*/
 
         //---- Filtering - setup : build arrays, check values -----
 
@@ -1881,9 +1654,6 @@ function loadDataSourcesTableData(data, filterType) {
                 latestUpdate          = data[i].latestUpdate;                                      // received date for latest update
                 numberOfdaysAvailable = getDifferenceInDays(latestUpdate, getTodaysDate());
                 alertColourClass  = getAlertColour(numberOfdaysLate, numberOfdaysAvailable);       // set class variable for setting row colour
-                outputUrl        = "...";
-
-                outputWacheteUrl = "...";
                 dataSourceId = data[i].dataSourceId;
 
                 htmlDataSection     = "<TR>";
@@ -1901,7 +1671,6 @@ function loadDataSourcesTableData(data, filterType) {
                 if (!prev)
                     prev = "";
                 htmlDataSection = prev + htmlDataSection;
-                // console.log("portalCheck 80 htmlDataSection=" + htmlDataSection);
                 $('#datatablebody').html(htmlDataSection);
             }
         };
@@ -1953,65 +1722,61 @@ function getAlertColour(numberOfdaysLate, numberOfdaysAvailable) {
 }
 
 function showPreviousUpdatesChart() {
-       var dataSourceName = $('#inputDataSourceName').val();
-        var dataSourceId   = $('#inputDataSourceId').val();
-     //   var htmlDataSection = '<div id="chartContainer" data-datasourcename="' + dataSourceName + '" + style="height: 700px; max-height:1000px ; max-width: 770px"></div>';
-         // $('#right-content-container').html(htmlDataSection);
+    var dataSourceName = $('#inputDataSourceName').val();
+    var dataSourceId   = $('#inputDataSourceId').val();
 
-        // get History Updates data for this Data Source
-        sendRequest('/historyupdates/list/' + dataSourceId, 'GET', null).then(function (value) {
-            var dataSourceName = $('#inputDataSourceName').val();   // todo - for chart title - is undefined -- is not giving data source name
-            // build dataset for chart and display chart
-            var historyData = [];
-            for (var i = 0; i < value.length ; i++) {
-                var receivedUpdateDate = value[i].updateReceived;
-                var dd   = receivedUpdateDate.slice(8, 10);
-                var mm   = receivedUpdateDate.slice(5, 7)-1;  //(subtract 1 from month)
-                var yyyy = receivedUpdateDate.slice(0, 4);
-                numberOfDaysLate = getDifferenceInDays(value[i].nextUpdateDue, value[i].updateReceived);
-                if (numberOfDaysLate < 0) {
-                     markerColour = 'red';
-                } else {
-                     markerColour = 'green';
-                }
-                historyData[i] = {
-                   x: new Date(yyyy, mm, dd),
-                   y: numberOfDaysLate, markerColor : markerColour
-                }  // y: mm + ", markerColor: 'red'"}
-            };
+    // get History Updates data for this Data Source
+    sendRequest('/historyupdates/list/' + dataSourceId, 'GET', null).then(function (value) {
+        var dataSourceName = $('#inputDataSourceName').val();
+        // build dataset for chart and display chart
+        var historyData = [];
+        for (var i = 0; i < value.length ; i++) {
+            var receivedUpdateDate = value[i].updateReceived;
+            var dd   = receivedUpdateDate.slice(8, 10);
+            var mm   = receivedUpdateDate.slice(5, 7)-1;  //(subtract 1 from month)
+            var yyyy = receivedUpdateDate.slice(0, 4);
+            numberOfDaysLate = getDifferenceInDays(value[i].nextUpdateDue, value[i].updateReceived);
+            if (numberOfDaysLate < 0) {
+                 markerColour = 'red';
+            } else {
+                 markerColour = 'green';
+            }
+            historyData[i] = {
+               x: new Date(yyyy, mm, dd),
+               y: numberOfDaysLate, markerColor : markerColour
+            }
+        };
 
+        var chart = new CanvasJS.Chart("chartContainerPreviousUpdates",  {
+            title:{
+                // text: dataSourceName + " : Previous updates",
+                fontSize: 17,
+                fontColor: "#2bafc6",
+                font: "ariel",
+            },
+            legend: {fontSize: 10},
+            // toolTipContent: "<b>{label}</b>: {y[0]} late}",
 
-            var chart = new CanvasJS.Chart("chartContainerPreviousUpdates",  {
-                title:{
-                    // text: dataSourceName + " : Previous updates",
-                    fontSize: 17,
-                    fontColor: "#2bafc6",
-                    font: "ariel",
-                },
-                legend: {fontSize: 10},
-                // toolTipContent: "<b>{label}</b>: {y[0]} late}",
+            axisX: {valueFormatString: "MMM",interlacedColor: "#deeff2", labelFontSize: 15},
+            axisY:{labelFontSize: 15},
+            height:200,
+            width:750,
+            data: [
+               { markerSize: 15,
+                 type: "line",
+                 dataPoints: historyData,
+               }
+            ],
+        });
 
-                axisX: {valueFormatString: "MMM",interlacedColor: "#deeff2", labelFontSize: 15},
-                axisY:{labelFontSize: 15},
-                height:200,
-                width:750,
-                data: [
-                   { markerSize: 15,
-                     type: "line",
-                     dataPoints: historyData,
-                   }
-                ],
-            });
+        chart.render();
 
-      //   var chart1 = new CanvasJS.Chart("chartContainer1", chart);
-         chart.render();
-
-         $(".canvasjs-chart-credit").hide();  // remove "canvasjs.com" logo, below chart
-         // remove "trial version" text....     does not work !
-         $('.chartContainerPreviousUpdates').contents()
-           .filter(function(){
-               return this.nodeType === 3 && $.trim(this.nodeValue) !== '';
-           }).remove();
+        $(".canvasjs-chart-credit").hide();  // remove "canvasjs.com" logo, below chart
+        // remove "trial version" text....     does not work !
+        $('.chartContainerPreviousUpdates').contents()
+          .filter(function(){
+              return this.nodeType === 3 && $.trim(this.nodeValue) !== '';
+        }).remove();
     });
 }
 
@@ -2089,49 +1854,10 @@ function getDataSourceContent(dataSourceId) {
     })
 }
 
-
 //------------------------------------------------------------
 
-// checkbox notes :-
 
-// notes :-
+// re-direct to another web-page
+// window.location.href = 'http://www.example.com/';
 
-
-//You can loop through all of the checkboxes by writing $(':checkbox').each(...).
-//$(':checkbox').each(function() {
-//    str += this.checked ? "1," : "0,";
-//});
-
-
-// var boxes = $(":checkbox:checked");      <---- gets all check boxes
-
-//$('input[type=checkbox]').each(function () {
-//           if (this.checked) {
-//               console.log($(this).val());
-//           }
-//});
-
-
-// var isChecked = $('#chkSelect').attr('checked')?true:false;
-// var isChecked = $('#chkSelect').prop('checked');
-// var isChecked = $('#chkSelect').is(':checked');
-// $("#checkboxid").prop('checked', true);  // Checks the box
-// $("#checkboxid").prop('checked', false); // Unchecks the box
-
-//$("input[type='checkbox']:checked").each(
-//    function() {
-//       // Your code goes here...
-//   }
-//);
-
-//------------------------------------------------------------
-//
-// $("#datepicker").datepicker( {
-//       format: "mm-yyyy",
-//       startView: "months",
-//       minViewMode: "months"
-//   });
-
-//changeMonth: true,
-//changeYear: true
-//})
+// .hasClass()
