@@ -10,7 +10,7 @@ $(document).ready(function () {
 
     sendRequest('/portal', 'GET', null).then(function (data) {
         loadPortalsAcc(data, null);
-    })
+    });
 
     sendRequest('/parentsource', 'GET', null).then(function (value) {
         loadDataSourceParentsAcc(value);
@@ -18,693 +18,6 @@ $(document).ready(function () {
 
     showDataSourcesTableAndAccordion("noFiltering");
 
-//--------------  P A R E N T  --------------------
-
-     // click in Accordion Data Source Parent list - display Data Source children (table) for this parent
-    $(document).on('click', '#dataSourceParentLinkList a', function (e) {
-        e.preventDefault();
-        $('.btnDsChartFilter').addClass('d-none');        // add "hide" class - i.e. remove chart Filter button
-        $('.btnDsTableFilter').addClass('d-none');        // add "hide" class - i.e. remove table Filter button
-
-        $("#dataSourceParentLinkList a").removeClass("highlightParentClickAcc");
-        $(this).addClass("highlightParentClickAcc");
-        var dataSourceParentId   = $(this).data('data-source-parent-id');
-        loadDataSourcesAcc(dataSourceParentId);
-
-        displayParentForm();
-        loadParentFormData(dataSourceParentId);
-
-
-// TODO -  BUG : Data Sources table not being display when click on Parent.  Need to click again.
-//      -  need to put html code for DS table, in earlier (few more lines above...) ian
-
-        $.get('templates/datasourcesTable.html', function (data) {
-            $('#dataSourceTable').html(data);  // show data source table HTML code
-
-            // get all data sources for the parent and load data table
-            sendRequest('/parentsource/' + dataSourceParentId + '/data', 'GET', null).then(function (value) {
-                loadDataSourcesTableData(value, "noFiltering");
-            });
-        });
-        $("#dataSourceAccHeading").val("value","Hello world!").button("refresh");
-     });
-
-    // SAVE button -- save Parent form
-    $(document).on('click', '#btnParentSave', function (e) {
-        if ($('#inputParentSourceName').val() !== "") {
-            var parentSourceId  = $('#inputParentSourceId').val();   // needed ??
-            var parentSourceObj = {
-                   parentSourceName: $('#inputParentSourceName').val(),
-                   url:              $('#inputParentSourceUrl').val()
-            };
-
-            if (parentSourceId == "") {
-                  // INSERT
-                  var endpoint = '/parentsource',
-                      method   = "POST";
-            } else {
-                  // UPDATE
-                  var endpoint = '/parentsource/put/' + parentSourceId,
-                      method   = "POST";  // workaround for word "PUT" ("PUT" does not work)
-            }
-
-            // save Parent Source data, then re-display Parent accordion
-            sendRequest(endpoint, method, parentSourceObj).then(function (value) {
-                alert(parentSourceObj.parentSourceName + " saved successfully");
-                $.get('templates/parentsForm.html', function (data) {
-                    $('#right-content-container').html(data);
-                });
-                // re-display Parent accordion column
-                sendRequest('/parentsource', 'GET', null).then(function (value) {
-                    loadDataSourceParentsAcc(value);
-                });
-            });
-        } else {
-            alert("CANNOT SAVE - please specify Parent Name");
-        }
-    });
-
-    // enable / disable SAVE button
-    $(document).on('keyup', '#inputParentSourceName', function() {
-        if  (($('#inputParentSourceName').val() !== "") &&
-            ($('#inputParentSourceUrl').val() !== "")) {
-                $('#btnParentSave').removeAttr('disabled');  // enable SAVE button
-        } else {
-                $("#btnParentSave").prop("disabled", true);  // disable SAVE until all fields are entered
-        }
-    });
-    $(document).on('keyup', '#inputParentSourceUrl', function() {
-        if  (($('#inputParentSourceName').val() !== "") &&
-            ($('#inputParentSourceUrl').val() !== "")) {
-                $('#btnParentSave').removeAttr('disabled');  // enable SAVE button
-        } else {
-                $("#btnParentSave").prop("disabled", true);  // disable SAVE until all fields are entered
-        }
-        console.log("$('#inputParentSourceName').val() = " + $('#inputParentSourceName').val());
-    });
-
-    // Click on "Add New Parent" BUTTON -- "ADD" on Parent form
-    $(document).on('click', '#btnParentAdd', function (e) {
-        // re-display Parent data form
-        $.get('templates/parentsForm.html', function (data) {
-            $('#right-content-container').html(data);
-        });
-    });
-
-    // Click on "Add new Data Source" BUTTON -- "ADD new Data Source" on Parent form
-    $(document).on('click', '#btnParentAddDataSource', function (e) {
-        // re-display Parent data form
-        $.get('templates/parentsForm.html', function (data) {
-            $('#right-content-container').html(data);
-            displayDataSourceForm();
-        });
-
-    });
-
-    // Click on "Close" BUTTON -- close Parent form
-    $(document).on('click', '#btnParentClose', function (e) {
-        // re-display Parent data form
-        $.get('templates/parentsForm.html', function (data) {
-            $('#right-content-container').html(data);
-        });
-    });
-
-     $(document).on("mouseenter","#dataSourceParentLinkList a", function (event) {
-         // hover -- highlight Portals in accordion list
-
-         // rebuild accordion Portal list
-         var parentSourceId = $(this).data('data-source-parent-id');
-         showAndHighlightAccPortals(parentSourceId);       // show and highlight Accordion portals which are linked to selected Parent Source
-     });
-
-    $(document).on("mouseleave","#dataSourceParentLinkList a", function (event) {
-       // $("#dataSourceParentLinkList a").removeClass("highlightParentClickAcc");
-        $("#portalLinkList a").removeClass("highlightPortalClickAcc");
-    });
-
-    // Click on BUTTON - "Main View" on main Navigation row
-    $(document).on('click', '#btnShowAllNextUpdates', function (e) {
-        showDataSourcesTableAndAccordion("noFiltering");
-    });
-
-    // Click on "Data Source Table Filter" -- button on main Navigation row
-    $(document).on('click', '#btnDsTableFilter', function (e) {
-        $('.btnDsTableFilter').addClass('d-none');   // add "hide" class -- i.e. remove the Filter button
-        initialiseFiltersToAll();
-
-        // show filter options for Data Source table
-        buildEwControllerCheckBoxControl();
-        $('.dataSourcesTableFilter').removeClass('d-none');   // show filters
-    });
-
-    // Click on "Charts" -- button on main top Navigation bar
-    $(document).on('click', '#btnShowNextUpdatesChart', function (e) {
-        chartDate = new Date();
-
-        $('.btnDsChartFilter').removeClass('d-none');    // remove "hide" class -- i.e. show the Filter button
-        $('.btnDsTableFilter').addClass('d-none');       // hide Data Source "Table Filter" button
-
-        $.get('templates/chart.html', function (data) {
-            $('#right-content-container').html(data);    // show chart (HTML part)
-        });
-
-        $('#dsChartFilterSearchText').val("");        // reset filter search text
-
-        // build HTML for Data Source Controller checkboxes, for filter (for table and chart)
-        sendRequest('/ewcontrollers', 'GET', null).then(function (value) {
-            var htmlDsControllerCheckBoxControlSection = '<li>';
-            htmlDsControllerCheckBoxControlSection += 'Controller';
-            htmlDsControllerCheckBoxControlSection += '<ul>';
-            for (var i = 0; i < value.length ; i++) {
-                 var ewControllerName = value[i].ewControllerName;
-                 htmlDsControllerCheckBoxControlSection += '<li class="ml-3"><input class="ewController" type="checkbox" checked value="' + value[i].ewControllerId + '">' + value[i].ewControllerName + '</li>';
-            };
-            htmlDsControllerCheckBoxControlSection += '</ul>';
-            htmlDsControllerCheckBoxControlSection += '</li>';
-            $('.ewControllerCheckBoxControl').html(htmlDsControllerCheckBoxControlSection);  // display filter section
-
-            // build HTML for Update Interval checkboxes, for filter (for table and chart)
-            sendRequest('/updateintervals', 'GET', null).then(function (value) {
-                var htmlUpdateIntervalCheckBoxControlSection = '<li>';
-                htmlUpdateIntervalCheckBoxControlSection += 'Interval';
-                htmlUpdateIntervalCheckBoxControlSection += '<ul>';
-                for (var i = 0; i < value.length ; i++) {
-                     var updateIntervalName = value[i].updateIntervalName;
-                     htmlUpdateIntervalCheckBoxControlSection += '<li><input class="ml-3 updateInterval" type="checkbox" checked value="' + value[i].updateIntervalId + '">' + value[i].updateIntervalName + '</li>';
-                };
-                htmlUpdateIntervalCheckBoxControlSection += '</ul>';
-                htmlUpdateIntervalCheckBoxControlSection += '</li>';
-                $('.updateIntervalCheckBoxControl').html(htmlUpdateIntervalCheckBoxControlSection);  // display filter section
-
-                drawChart("nextUpdates",getTodaysDate());
-            });
-         });
-    });
-
-    // Click on "Charts Filter" -- button on main Navigation row
-    $(document).on('click', '#btnDsChartFilter', function (e) {
-         $('.chartFilter').removeClass('d-none');          // remove "hide" class -- i.e. show the filters
-         $('.btnDsChartFilter').addClass('d-none');        // remove "hide" class -- i.e. show the Filter button
-
-         // show filter options for Data Source chart
-         initialiseFiltersToAll();
-    });
-
-//--------------  D A T A   S O U R C E  -------------------
-
-    // click on row in Data Source table
-    $(document).on('click', '.dataSourceRowName', function (e) {
-        e.preventDefault();
-        $('.btnDsChartFilter').addClass('d-none');        // add "hide" class - i.e. remove chart Filter button
-        $('.btnDsTableFilter').addClass('d-none');        // add "hide" class - i.e. remove table Filter button
-        var dataSourceId = $(this).data('data-source-id');
-        var activeDataSource = 1;
-        showDataSourcesFormAndPortalTable(dataSourceId, activeDataSource);
-    });
-
-    // click in Data Source Accordion list - display Data Source form and linked portals (Portals table)
-    $(document).on('click', '#dataSourceLinkList a', function (e) {
-       e.preventDefault();
-       $('.btnDsChartFilter').addClass('d-none');         // add "hide" class - i.e. remove chart Filter button
-       $('.btnDsTableFilter').addClass('d-none');         // add "hide" class - i.e. remove table Filter button
-       $('.searchTextFilter').addClass('d-none');         // add "hide" Data Source table search-text filter
-       $('#dsTableFilterSearchText').val("");             // reset filter search text
-       $('#dsChartFilterSearchText').val("");             // reset filter search text
-
-       var dataSourceId = $(this).data('data-source-id');
-       var activeDataSource = 1;
-       showDataSourcesFormAndPortalTable(dataSourceId, activeDataSource);
-    });
-
-     // click on "New Data Source" BUTTON -- Data Sources form   (add data source)
-    $(document).on('click', '#btnDataSourceAdd', function (e) {
-        displayDataSourceForm();
-    });
-
-    // hover -- highlight relevant Portals in accordion list
-    $(document).on("mouseenter","#dataSourceLinkList a", function (event) {
-        // rebuild accordion Portal list
-        var dataSourceId = $(this).data('data-source-id');
-        getAndLoadPortalsAcc(dataSourceId);
-    });
-
-    // SAVE button -- save data sources form
-    $(document).on('click', '.btnDataSourceSave', function (e) {
-       var dataSourceId =  $('#inputDataSourceId').val();
-       var selectedParentSourceId   = $('#parentDataSourceDropDownList option:selected').val();
-       var selectedUpdateIntervalId = $('#updateIntervalDropDownList option:selected').val();
-       var selectedEwControllerId   = $('#ewControllerDropDownList option:selected').val();
-       var selectedSourceTypeId     = $('#sourceTypeDropDownList option:selected').val();
-       var selectedUpdateMethodId   = $('#updateMethodDropDownList option:selected').val();
-
-       var inputNextUpdateLatestOld    = "";
-       var inputLatestUpdateOld        = "";
-       var inputTransferredToMasterOld = "";
-       var inputProcessedUpdateOld     = "";
-       var inputCommentsUpdateOld      = "";
-
-       // check if ok to perform SAVE
-
-       if (($('#inputDataSourceName').val() !== "")
-           && (selectedEwControllerId       !== "")
-           && (selectedUpdateIntervalId     !== "")
-           && (selectedParentSourceId       !== "")) {
-
-          // check whether all actions are completed (i.e. all dates have been entered)
-          if    (($("#inputNextUpdateLatest").val()    !== "")
-              && ($('#inputLatestUpdate').val()        !== "")
-              && ($('#inputTransferredToMaster').val() !== "")
-              && ($('#inputProcessedUpdate').val()     !== "")) {
-
-                  // store this "Next Update"'s date values, for writing to history
-                  inputNextUpdateLatestOld    = $('#inputNextUpdateLatest').val();         // "Next Update Due" date
-                  inputLatestUpdateOld        = $('#inputLatestUpdate').val();             // "update received" date
-                  inputTransferredToMasterOld = $('#inputTransferredToMaster').val();
-                  inputProcessedUpdateOld     = $('#inputProcessedUpdate').val();
-                  inputCommentsUpdateOld      = $('#inputCommentsUpdate').val();
-
-                  var updateIntervalDaysIncrement = $('#updateIntervalDropDownList').find(':selected').attr('data-updateIntervalDaysIncrement')
-                  setNextUpdateDateSuggestion($('#inputLatestUpdate').val(),updateIntervalDaysIncrement);
-
-                // TODO -  add text to Alert message :      nextUpdateMsg = "Next Update due : " +
-
-                  // empty the 3 x "action dates" fields and "update comment" field
-                  $('#inputLatestUpdate').val("");
-                  $('#inputTransferredToMaster').val("");
-                  $('#inputProcessedUpdate').val("");
-                  $('#inputCommentsUpdate').val("");
-           };
-
-          // TODO - look at dependancy / brother / sister / sub / feeder...
-          var dependancyBrotherId = "";
-              dependancySisterId  = "";
-          if ($('#inputDependancyId').val() != null) {
-             if ($('#inputUpdateMethod').val() == "manuell") {
-                 dependancyBrotherId = $('#inputDependancyId').val();
-             } else {
-                 dependancySisterId = $('#inputDependancyId').val();
-             }
-          }
-
-          var dataSourceObj = {
-              dataSourceName:      $('#inputDataSourceName').val(),
-              url:                 $('#inputUrl').val(),
-              sourceType:          $('#inputSourceType').val(),
-              comments:            $('#inputDsComments').val(),
-              nextUpdateLatest:    $('#inputNextUpdateLatest').val(),
-              latestUpdate:        $('#inputLatestUpdate').val(),
-              transferredToMaster: $('#inputTransferredToMaster').val(),
-              processedUpdate:     $('#inputProcessedUpdate').val(),
-              commentsUpdate:      $('#inputCommentsUpdate').val(),
-              deactivated:         $('#inputDeactivated').val()+"",
-              wacheteUrl:          $('#inputWacheteUrl').val()+"",
-              dependancyBrotherId: dependancyBrotherId,
-              dependancySisterId:  dependancySisterId,
-              parentId:            selectedParentSourceId,
-              updateInterval:      selectedUpdateIntervalId,
-              ewControllerId:      selectedEwControllerId,
-              sourceType:          selectedSourceTypeId,
-              updateMethod:        selectedUpdateMethodId,
-          };
-
-          if (dataSourceId == "") {
-             // INSERT
-             var endpoint = '/datasource',
-                 method   = "POST";
-          } else {
-             // UPDATE
-             var endpoint = '/datasource/put/' + dataSourceId,
-                 method   = "POST";  // workaround for word "PUT" ("PUT" does not work)
-          }
-          // insert/update DataSources table for this item
-          sendRequest(endpoint, method, dataSourceObj).then(function (value) {
-
-              if (dataSourceId !== "") {
-
-                  // update HistoryUpdates database table with this "Next Update", which is now the "most recent" / "active" update
-                  if (inputNextUpdateLatestOld != "") {
-                     var historyUpdateObj = {
-                        dataSourceId:              dataSourceId,
-                        nextUpdateDue:             inputNextUpdateLatestOld,
-                        updateReceived:            inputLatestUpdateOld,
-                        updateTransferredToMaster: inputTransferredToMasterOld,
-                        updateProcessed:           inputProcessedUpdateOld,
-                        updateComments:            inputCommentsUpdateOld
-                     };
-                     sendRequest('/historyupdates', 'POST', historyUpdateObj);
-                  }
-
-                  var currentPortalId;
-                  // remove any unchecked Portals from the "Portals / Data Sources" xref table
-                   for (var i = 0; i < currentDataSourceLinkedPortalIds.length ; i++) {
-                      currentPortalId = currentDataSourceLinkedPortalIds[i];
-                      if ($.inArray(currentPortalId, dataSourceLinkedPortalIds) == -1) {
-                         // portal was unchecked - delete PortalSource (xref) item for this Data Source id
-                         endpoint = "/portalsourcelink/delete/data/" + dataSourceId + "/" + currentPortalId;
-                         method   = "POST";
-                         sendRequest(endpoint, method, null);
-                      };
-                  };
-              }
-
-              if (dataSourceId == "") {dataSourceId = value.dataSourceId;};   // returned back, after having done SQL INSERT
-
-              // add newly linked Portals to the "Portals / Data Sources" xref table
-              for (var i = 0; i < dataSourceLinkedPortalIds.length ; i++) {
-                  newPortalId = dataSourceLinkedPortalIds[i];
-                  if ($.inArray(newPortalId, currentDataSourceLinkedPortalIds) == -1) {
-                      // portal is newly checked - insert new PortalSource (xref) item for this Data Source id
-
-                      var portalId = dataSourceLinkedPortalIds[i]   ;
-                      var portalSourcesObj = {
-                          portalId:          dataSourceLinkedPortalIds[i],
-                          dataSourceId:      dataSourceId
-                      };
-                      var endpoint = '/portalsource',
-                          method   = 'POST';                           // should be "INSERT", but not working
-                      sendRequest(endpoint, method, portalSourcesObj); // INSERT to PortalSources xref data table
-                   };
-               };
-               displayDataSourceForm();
-               alert(dataSourceObj.dataSourceName + " saved successfully !");
-               showDataSourcesTableAndAccordion("noFiltering");
-          });
-
-        } else {
-           alert('CANNOT SAVE - please enter : (1) "Data Source Name", (2) "Parent", (3) "Interval" (4) "Early Warning Controller"');
-        }
-     });      // end of click on BUTTON - SAVE Data Sources
-
-     // click on "Close" BUTTON -- Data Sources form
-     $(document).on('click', '#btnDataSourceClose', function (e) {
-          showDataSourcesTableAndAccordion("noFiltering");
-     });
-
-     // click on BUTTON -- "Link to Portals" (from Data Sources Form, shows modal form)
-     $(document).on('click', '#btnDataSourceLinkToPortal', function (e) {
-
-         var dataSourceName = $('#inputDataSourceName').val();
-
-         // build HTML section, for portals checkbox form
-
-         // get ALL Portals
-         sendRequest('/portal', 'GET', null).then(function (value) {
-
-             // get list of portals, build HTML code
-             var htmlDataSection = '<ul>';
-             for (var i = 0; i < value.length ; i++) {
-                  var portalId = value[i].portalId;
-                  htmlDataSection += '<li><input type="checkbox" value="' + portalId + '"';
-                  if ($.inArray(portalId, dataSourceLinkedPortalIds) != -1) {
-                     htmlDataSection += " checked";
-                   }
-                  htmlDataSection += '>' + value[i].portalName + '</li>';
-             };
-             htmlDataSection += '</ul>';
-             $('#datasourceLinksToPortalsModal-title').html("Portals using Data Source\n\n : " + dataSourceName);
-             $('#datasourceLinksToPortalsModal-body').html(htmlDataSection);    // insert HTML Portals modal form (checkboxes)
-             $('#datasourceLinksToPortalsModal').modal('show');
-          });
-     });
-
-     // click on BUTTON -- "Accept" on modal form : Link to Portal
-     $(document).on('click', '#btnLinkToPortalAccept', function (e) {
-         var boxes = $(":checkbox:checked")
-
-         dataSourceLinkedPortalIds = [];
-         var i = 0;
-         $(boxes).each(function () {
-             if (this.checked) {
-                dataSourceLinkedPortalIds[i] = Number($(this).val());
-                i=i+1;
-             }
-         });
-     });
-
-      // click on BUTTON -- "Deactivate Data Source"
-      $(document).on('click', '#btnDataSourceDeactivate', function (e) {
-          var dataSourceName = $('#inputDataSourceName').val();
-          alert(dataSourceName + " will be de-activated.  Please click SAVE.");
-          var todaysDate = getTodaysDate() ;
-          $('#inputDeactivated').val(todaysDate);
-      });
-
-// TODO -- DEPENDANCIES
-      // click on BUTTON -- "Dependencies"
-        //      $(document).on('click', '#btnDependencies', function (e) {
-        //          var dataSourceName = $('#inputDataSourceName').val();
-        //
-        //          select btnDependenciesloop thru, build 2 lists - dependent on / dependent for
-        //          fill 2 html sections
-        //
-        //
-        //      });
-
-
-
-
-
-    // click on Checkbox in Data Sources form, to indicate "Latest Update received"
-    $(document).on('click', '#inputLatestUpdateCheckbox', function (e) {
-        var thisCheckBox = $(this);
-        if (thisCheckBox.is (':checked')) {
-            $('#inputLatestUpdate').val(getTodaysDate());  // set field to today's date
-        } else {
-           $('#inputLatestUpdate').val("");
-        }
-    });
-
-    // click on Checkbox in Data Sources form, to indicate "Transferred to Master"
-    $(document).on('click', '#inputTransferredToMasterCheckbox', function (e) {
-        var thisCheckBox = $(this);
-        if (thisCheckBox.is (':checked')) {
-            $('#inputTransferredToMaster').val(getTodaysDate());  // set field to today's date
-        } else {
-           $('#inputTransferredToMaster').val("");
-        }
-    });
-
-    // click on Checkbox in Data Sources form, to indicate "Update Processed"
-    $(document).on('click', '#inputProcessedUpdateCheckbox', function (e) {
-        var thisCheckBox = $(this);
-        if (thisCheckBox.is (':checked')) {
-            $('#inputProcessedUpdate').val(getTodaysDate());  // set field to today's date
-        } else {
-           $('#inputProcessedUpdate').val("");
-        }
-    });
-
-    // click on BUTTON -- "URL" in Data Sources Form
-    $(document).on('click', '#btnDsFormUrl', function (e) {
-          var url = $('#inputUrl').val();
-          if (url !== "") {window.open(url, '_blank');};
-    });
-
-    // click on BUTTON -- "URL" in Data Sources Form
-    $(document).on('click', '#btnDsFormWacheteUrl', function (e) {
-          var watcheUrl = $('#inputWacheteUrl').val();
-          if (watcheUrl !== "") {window.open(watcheUrl, '_blank');};
-    });
-
-    // Click on "URL" -- button on Data Sources table row
-    $(document).on('click', '.dsTableURL', function (e) {
-         var url = $(this).data('url');
-         if (url !== "") {window.open(url, '_blank');};
-    });
-
-    // Click on "Wachete" URL -- button on Data Sources table row
-    $(document).on('click', '.dsTableWacheteUrl', function (e) {
-         var wacheteUrl = $(this).data('wacheteurl');
-         if (wacheteUrl !== "") {window.open(wacheteUrl, '_blank');};
-    });
-
-
-//--------------  P O R T A L  -------------------
-
-    // click in Accordion Portal list -- display Portal details + show all data sources
-    $(document).on('click', '#portalLinkList a', function (e) {
-        e.preventDefault();
-        $('.btnDsChartFilter').addClass('d-none');       // add "hide" class - i.e. remove chart Filter button
-        $('.btnDsTableFilter').addClass('d-none');       // add "hide" class - i.e. remove table Filter button
-
-        $("#portalLinkList a").removeClass("highlightPortalClickAcc");
-        $(this).addClass("highlightPortalClickAcc");
-
-        // get the Portals's data and display form and data, then display Data Sources linked this Portal
-        $.get('templates/portalsForm.html', function (data) {
-            $('#right-content-container').html(data);
-            getPortalContent(portalId);     // fill Portal form's data fields
-
-            // get list of CURRENTLY linked-to Data Sources for modal form ppp
-            currentPortalLinkedDataSourcesIds = [];  // stores current situation, as it is today
-            portalLinkedDataSourcesIds        = [];  // working array, changes as user checks/unchecks boxes.  Contains list of new situation.
-
-            sendRequest('/portalsource/portal/' + portalId, 'GET', null).then(function (value) {
-                // make array, for dataSourcesIds, for checkboxes
-                for (var i = 0; i < value.length ; i++) {
-                    portalLinkedDataSourcesIds[i] = value[i].dataSourceId;
-                }
-                currentPortalLinkedDataSourcesIds = portalLinkedDataSourcesIds;  // make copy, for comparisson purposes, when saving
-            });
-            $.get('templates/datasourcesTable.html', function (data) {
-                $('#dataSourceTable').html(data);  // get and show data source table HTML code
-            });
-        });
-
-        var portalId = $(this).data('portal-id');
-        var data     = "";
-        // get all datasources for this portal and display table
-        sendRequest('/portal/' + portalId + '/data', 'GET', null).then(function (value) {
-            loadDataSourcesTableData(value, "noFiltering");
-        });
-    });
-
-    // SAVE button -- save Portal form
-    $(document).on('click', '#btnPortalSave', function (e) {
-        if ($('#inputPortalName').val() == "") {
-           alert("CANNOT SAVE - Please specify the Portal Name");
-        } else {
-            var selectedEwControllerId = $('#ewControllerDropDownList option:selected').val();
-            var portalId  =  $('#inputPortalId').val();
-            var portalObj = {
-                   portalName:         $('#inputPortalName').val(),
-                   url:                $('#inputPortalUrl').val(),
-                   ewControllerPortal: selectedEwControllerId
-            };
-            if (portalId == "") {
-                  // INSERT
-                  var endpoint = '/portal',
-                      method   = "POST";
-            } else {
-                  // UPDATE
-                  var endpoint = '/portal/put/' + portalId,
-                      method   = "POST";  // workaround for word "PUT" ("PUT" does not work)
-            }
-            // save Portal data, then re-display Portal data form ppp
-            sendRequest(endpoint, method, portalObj).then(function (value) {
-
-                // remove any unchecked Data Sources from the "Portals / Data Sources" xref table
-                for (var i = 0; i < currentPortalLinkedDataSourcesIds.length ; i++) {
-                    currentDataSourcesId = currentPortalLinkedDataSourcesIds[i];
-                    if ($.inArray(currentDataSourcesId, portalLinkedDataSourcesIds) == -1) {
-                       // (data source was unchecked - delete PortalSource (xref) item for this Portal id)
-                       endpoint = "/portalsourcelink/delete/data/" + currentDataSourcesId + "/" + portalId;
-                       method   = "POST";
-                       sendRequest(endpoint, method, null);
-                    };
-                };
-
-                if (portalId == "") {portalId = value.portalId;};   // returned back, after having done INSERT
-
-                // add newly linked Data Sources to the "Portals / Data Sources" xref table
-                for (var i = 0; i < portalLinkedDataSourcesIds.length ; i++) {
-                    newDataSourcesId = portalLinkedDataSourcesIds[i];
-                    if ($.inArray(newDataSourcesId, currentPortalLinkedDataSourcesIds) == -1) {
-                        // data source is newly checked - insert new PortalSource (xref) item for this Portal id
-
-                        var dataSourcesId = portalLinkedDataSourcesIds[i];
-                        var portalSourcesObj = {
-                            portalId:          portalId,
-                            dataSourceId:      portalLinkedDataSourcesIds[i],
-                        };
-                        var endpoint = '/portalsource',
-                            method   = 'POST';                           // should be "INSERT", but not working
-                        sendRequest(endpoint, method, portalSourcesObj); // INSERT to PortalSources xref data table
-                    };
-                };
-
-                alert(portalObj.portalName + " saved successfully");
-                $.get('templates/portalsForm.html', function (data) {
-                    $('#right-content-container').html(data);
-                    buildEwControllerDropDownList(null);
-                    currentPortalLinkedDataSourcesIds = [];  // stores current situation, as it is today
-                    portalLinkedDataSourcesIds        = [];  // working array, changes as user checks/unchecks boxes.  Contains list of new situation.
-                    // re-display Portals accordion column
-                    sendRequest('/portal', 'GET', null).then(function (data) {
-                        loadPortalsAcc(data, null);
-                    });
-                });
-            })
-        }
-    });
-
-    // enable / disable SAVE button
-    $(document).on('keyup', '#inputPortalName', function() {
-        if  (($('#inputPortalName').val() !== "") &&
-            ($('#inputPortalUrl').val() !== "")) {
-                $('#btnPortalSave').removeAttr('disabled');  // enable SAVE button
-        } else {
-                $("#btnPortalSave").prop("disabled", true);  // disable SAVE until all fields are entered
-        }
-    });
-
-    $(document).on('keyup', '#inputPortalUrl', function() {
-        if  (($('#inputPortalName').val() !== "") &&
-            ($('#inputPortalUrl').val() !== "")) {
-                $('#btnPortalSave').removeAttr('disabled');  // enable SAVE button
-        } else {
-                $("#btnPortalSave").prop("disabled", true);  // disable SAVE until all fields are entered
-        }
-    });
-
-    // Click on "Close" BUTTON -- close Portal form
-    $(document).on('click', '#btnPortalClose', function (e) {
-        // re-display Portal data form
-        $.get('templates/portalsForm.html', function (data) {
-            $('#right-content-container').html(data);
-        });
-    });
-
-    // Click on "URL" -- button on Data Sources table row
-    $(document).on('click', '.portalURL', function (e) {
-         var url = $(this).data('url');
-         if (url !== "") {window.open(url, '_blank');};
-    });
-
-    $(document).on('click', '#btnPortalAdd', function (e) {
-       addNewPortal();
-    });
-
-    // click on BUTTON -- "Link to Data Sources" (from Portal form, shows modal form)
-    $(document).on('click', '#btnPortalsLinkToDataSources', function (e) {
-
-        var portalName = $('#inputPortalName').val();
-
-        // build HTML section, for Data Sources checkbox modal form
-
-        // get ALL Data Sources
-        sendRequest('/datasource', 'GET', null).then(function (value) {
-
-            // get list of Data Sources, build HTML code
-            var htmlDataSection = '<ul>';
-            for (var i = 0; i < value.length ; i++) {
-                 var dataSourceId = value[i].dataSourceId;
-                 htmlDataSection += '<li><input type="checkbox" value="' + dataSourceId + '"';
-                 if ($.inArray(dataSourceId, portalLinkedDataSourcesIds) != -1) {
-                    htmlDataSection += " checked";
-                 }
-                 htmlDataSection += '>' + value[i].dataSourceName + '</li>';
-            };
-            htmlDataSection += '</ul>';
-            $('#portalLinksToDataSourcesModal-title').html("Data Sources used by Portal\n\n : " + portalName);
-            $('#portalLinksToDataSourcesModal-body').html(htmlDataSection);    // insert HTML Data Sources modal form (checkboxes)
-            $('#portalLinksToDataSourcesModal').modal('show');
-        });
-    });
-
-     // click on BUTTON -- "Accept" on modal form : Link to Data Sources
-     $(document).on('click', '#btnLinkToDataSourcesAccept', function (e) {
-         var boxes = $(":checkbox:checked")
-
-         portalLinkedDataSourcesIds = [];
-         var i = 0;
-         $(boxes).each(function () {
-             if (this.checked) {
-                portalLinkedDataSourcesIds[i] = Number($(this).val());
-                i=i+1;
-             }
-         });
-     });
 
 //--------------------  P R E V I O U S    U P D A T E S  ---------------------------
 
@@ -792,69 +105,7 @@ $(document).ready(function () {
         showDataSourcesFormAndPortalTable(dataSourceId, activeDataSource);
     });
 
-// ---------   f i l t e r s  (main table)   --    i n s t a n t   e f f e c t   ------------------
 
-    $(document).on('click', '.dataSourcesTableFilter .ewController', function (e) {
-        sendRequest('/datasource', 'GET', null).then(function (value) {
-            loadDataSourcesTableData(value, "");
-        });
-    });
-
-    $(document).on('click', '.dataSourcesTableFilter .updateInterval', function (e) {
-        sendRequest('/datasource', 'GET', null).then(function (value) {
-            loadDataSourcesTableData(value, "");
-        });
-    });
-
-    $(document).on('click', '.dataSourcesTableFilter .receivedButNotCompletedCheckbox', function (e) {
-        sendRequest('/datasource', 'GET', null).then(function (value) {
-            loadDataSourcesTableData(value, "");
-        });
-    });
-
-    $(document).on('click', '.dataSourcesTableFilter .wacheteSetupYesCheckbox', function (e) {
-        sendRequest('/datasource', 'GET', null).then(function (value) {
-            loadDataSourcesTableData(value, "");
-        });
-    });
-
-    $(document).on('click', '.dataSourcesTableFilter .wacheteSetupNoCheckbox', function (e) {
-        sendRequest('/datasource', 'GET', null).then(function (value) {
-            loadDataSourcesTableData(value, "");
-        });
-    });
-
-    $(document).on("keyup",".dsTableFilterSearchText", function(){
-        sendRequest('/datasource', 'GET', null).then(function (value) {
-            loadDataSourcesTableData(value, "");
-        })
-    });
-
-// ---------   f i l t e r s  (chart)   --    i n s t a n t   e f f e c t   ------------------
-
-    $(document).on("keyup",".dsChartFilterSearchText", function(){
-        drawChart("nextUpdates",getTodaysDate());
-    });
-
-    // click on a "ewController" Checkbox in filter
-    $(document).on('click', '.chartFilter .ewController', function (e) {
-         drawChart("nextUpdates",getTodaysDate());
-    });
-
-    // click on a "update interval" Checkbox in filter
-    $(document).on('click', '.chartFilter .updateInterval', function (e) {
-         drawChart("nextUpdates",getTodaysDate());
-    });
-
-    $(document).on('click', '#decreaseMonthButton', function () {
-        chartDate.setMonth(chartDate.getMonth() -1);
-        drawChart("nextUpdates", chartDate.toISOString().slice(0, 10));
-    });
-
-    $(document).on('click', '#increaseMonthButton', function () {
-        chartDate.setMonth(chartDate.getMonth() +1);
-        drawChart("nextUpdates", chartDate.toISOString().slice(0, 10));
-    });
 
 //--------------  N A V I G A T I O N   B A R  ------------------
 
@@ -1027,8 +278,9 @@ function drawChart(dataTypeToShow, monthYearToShow) {
                    ewControllerId   = value[i].ewControllerId;
                    updateIntervalId = value[i].updateInterval;
 
-
-                   if (($.inArray(ewControllerId, ewControllerIds) !== -1) && ($.inArray(updateIntervalId, updateIntervalIds) !== -1) &&
+    console.log("chart1 - updateIntervalIds=" + updateIntervalId + "***");
+    console.log("chart1 - all updateIntervalId=" + updateIntervalIds + "***");
+                   if (($.inArray(ewControllerId, ewControllerIds) !== -1) && ($.inArray(updateIntervalId+"", updateIntervalIds) !== -1) &&
                        ((searchTextEntered == "") || ((searchTextEntered != "") && (value[i].dataSourceName.match(new RegExp(searchTextEntered, "i")) != null))))  {
                        // choose box colour based on Data Source's update method
                        switch (true) {
@@ -1048,6 +300,7 @@ function drawChart(dataTypeToShow, monthYearToShow) {
                               var boxColor = "pink";
                               break;
                        }
+    console.log("chart2");
 
                        var url = value[i].url;
                        chartData[j] = {
@@ -1149,24 +402,6 @@ function buildUpdateIntervalCheckBoxControl() {
         $('.updateIntervalCheckBoxControl').html(htmlUpdateIntervalCheckBoxControlSection);  // display filter section
     });
 }
-
-/*function buildUpdateMethodCheckBoxControl() {
-
-    // build HTML for Update Method checkboxes, for filter (for table and chart)
-    sendRequest('/updatemethod', 'GET', null).then(function (value) {
-        var htmlUpdateMethodCheckBoxControlSection = '<li>';
-        htmlUpdateMethodCheckBoxControlSection += 'Update Method';
-        htmlUpdateMethodCheckBoxControlSection += '<ul>';
-        for (var i = 0; i < value.length ; i++) {
-             var updateMethodName = value[i].updateMethodName;
-             htmlUpdateMethodCheckBoxControlSection += '<li><input class="updateMethod" type="checkbox" checked value="' + value[i].updateMethodId + '">' + value[i].updateIntervalName + '</li>';
-        };
-
-        htmlUpdateMethodCheckBoxControlSection += '</ul>';
-        htmlUpdateMethodCheckBoxControlSection += '</li>';
-        $('.updateMethodCheckBoxControl').html(htmlUpdateMethodCheckBoxControlSection);  // display filter section
-    });
-}*/
 
 function getMonthNames() {
     var monthNames = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
@@ -1289,13 +524,23 @@ function displayDataSourceForm() {
     });
 }
 
-function displayParentForm() {
+function displayParentForm(dataSourceParentId) {
     $.get('templates/parentsForm.html', function (data) {
        $('#right-content-container').html(data);
        $('#btnParentDelete').addClass('d-none');       // remove DELETE button
     //    $('#btnParentAdd').addClass('d-none');       // remove NEW button
        $("#btnParentSave").prop("disabled", true);     // disable SAVE until all fields are entered
+
+       $.get('templates/datasourcesTable.html', function (data) {
+           $('#dataSourceTable').html(data);  // show data source table HTML code
+
+           // get all data sources for the parent and load data table
+           sendRequest('/parentsource/' + dataSourceParentId + '/data', 'GET', null).then(function (value) {
+               loadDataSourcesTableData(value, "noFiltering");
+           });
+       });
     });
+
 }
 
 function buildParentDropDownList(parentId) {
@@ -1367,7 +612,7 @@ function buildUpdateMethodDropDownList(updateMethodId) {
 function buildEwControllerDropDownList(ewControllerId) {
     // build drop-down list for Early Warning Controllers
     var htmlDataSection  = '<div class="form-group row">';
-        htmlDataSection += '<label for="ewControllerList" class="col-md-3">EW Controllller</label>';
+        htmlDataSection += '<label for="ewControllerList" class="col-md-3">EW Controller</label>';
         htmlDataSection += '<select id="ewControllerList" col-md-4 inputDataSourceChange>';
     if ((ewControllerId == null) || (ewControllerId == "")) {htmlDataSection += '<option value=""></option>'};  // make empty top item
 
@@ -1646,8 +891,12 @@ function loadDataSourcesTableData(data, filterType) {
             if ((filterType == "noFiltering")
                || ($.inArray(ewControllerId, ewControllerIds) !== -1) &&
                 ($.inArray(updateIntervalId, updateIntervalIds) !== -1) &&
-              ((searchTextEntered == "") || ((searchTextEntered != "") && (data[i].dataSourceName.match(searchTextEntered,"/gi") != null))) &&
+              ((searchTextEntered == "") || ((searchTextEntered != "") && (data[i].dataSourceName.match(new RegExp(searchTextEntered, "i")) != null))) &&
               ((receivedButNotCompletedFilterCheck == false || ((receivedButNotCompletedFilterCheck == true) && (data[i].latestUpdate != ""))))) {
+
+    // ((searchTextEntered == "") || ((searchTextEntered != "") && (value[i].dataSourceName.match(new RegExp(searchTextEntered, "i")) != null))))  {
+
+
 
                 nextUpdateDate        = data[i].nextUpdateLatest;
                 numberOfdaysLate      = getDifferenceInDays(nextUpdateDate, getTodaysDate());
@@ -1814,8 +1063,6 @@ function getDataSourceContent(dataSourceId) {
         $('#inputDataSourceName').val(value.dataSourceName);
         $('#inputUrl').val(value.url);
         $('#inputSourceType').val(value.sourceType);
-        //$('#inputUpdateInterval').val(value.updateInterval);
-        //$('#inputUpdateMethod').val(value.updateMethod);
         $('#inputDsComments').val(value.comments);
 
         $('#inputNextUpdateLatest').val(value.nextUpdateLatest);
@@ -1841,14 +1088,16 @@ function getDataSourceContent(dataSourceId) {
            $("#inputNextUpdateLatest").addClass("dueToday");
         }
 
-     //   $('#inputParentId').val(value.parentId);
-        var inputDependancyId = "";
+     /* TODO dependancies -- do in next version of program
+        var inputDependancyId = null;
         if (value.inputDependancyBrotherId == null) {
             inputDependancyId = $(value.inputDependancySisterId);
         } else {
             inputDependancyId = $(value.inputDependancyBrotherId);
         }
         $('#inputDependancyId').val(value.inputDependancyId);
+     */
+
         $('#inputCommentsUpdate').val(value.commentsUpdate);
         $('#inputWacheteUrl').val(value.wacheteUrl);
     })

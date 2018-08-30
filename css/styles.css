@@ -331,6 +331,7 @@ vertical-align: middle;
 
 .dsButtons {
    margin: 10px;
+   margin-left: -10px;
 }
 
 .monthButtons {
