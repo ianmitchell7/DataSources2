@@ -1,4 +1,5 @@
 // git test
+// var baseUrl = "http://localhost:4567";
 var baseUrl = "http://dog.businessmonitor.no:8897";
 var dataSourceLinkedPortalIds = [];   // storage for checked boxes, on DataSource / Portals modal form
 var portalLinkedDataSourcesIds = [];  // storage for checked boxes, on Portal / DataSources modal form
